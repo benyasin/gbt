@@ -1,19 +1,17 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <lg-app></lg-app>
 </template>
 
 <script>
-  export default {
-    name: "app"
-  };
+import app from '@/components/layout/app'
+export default {
+  name: 'App',
+  components: {
+    'lg-app':app,
+  }
+}
 </script>
 
-<style lang="less">
-  @import '~vux/src/styles/reset.less';
+<style>
 
-  body {
-    background-color: #fbf9fe;
-  }
 </style>

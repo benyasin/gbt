@@ -1,15 +1,32 @@
-import Vue from 'vue'{{#if_eq lintConfig "airbnb"}};{{/if_eq}}
-import Router from 'vue-router'{{#if_eq lintConfig "airbnb"}};{{/if_eq}}
-import HelloWorld from '@/components/HelloWorld'{{#if_eq lintConfig "airbnb"}};{{/if_eq}}
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from '@/store'
+import Index from '@/views/index'
 
-Vue.use(Router){{#if_eq lintConfig "airbnb"}};{{/if_eq}}
+Vue.use(Router)
 
-export default new Router({
+Router.prototype.goBack = function (val) {
+  store.commit('SET_DIRECTION', val);
+  if(store.state.direction == 'tip'){
+    window.history.go(-1);
+  }else{
+    setTimeout(()=>{window.history.go(-1)},50);
+  }
+}
+
+const router =  new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld{{#if_eq lintConfig "airbnb"}},{{/if_eq}}
-    }{{#if_eq lintConfig "airbnb"}},{{/if_eq}}
-  ]{{#if_eq lintConfig "airbnb"}},{{/if_eq}}
-}){{#if_eq lintConfig "airbnb"}};{{/if_eq}}
+      name: 'Index',
+      component: Index,
+    }
+  ]
+})
+
+router.afterEach((to, from) => {
+  if(store.state.direction !== 'tip')
+    store.commit('SET_DIRECTION', 'tip');
+})
+
+export default router;

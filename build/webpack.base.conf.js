@@ -9,7 +9,9 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-let webpackConfig = {
+
+
+const webpackConfig = {
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'
@@ -30,16 +32,6 @@ let webpackConfig = {
   },
   module: {
     rules: [
-      ...(config.dev.useEslint? [{
-        test: /\.(js|vue)$/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
-        options: {
-          formatter: require('eslint-friendly-formatter'),
-          emitWarning: !config.dev.showEslintErrorsInOverlay
-        }
-      }] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -48,7 +40,7 @@ let webpackConfig = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -75,29 +67,21 @@ let webpackConfig = {
         }
       }
     ]
+  },
+  node: {
+    // prevent webpack from injecting useless setImmediate polyfill because Vue
+    // source contains it (although only uses it if it's native).
+    setImmediate: false,
+    // prevent webpack from injecting mocks to Node native modules
+    // that does not make sense for the client
+    dgram: 'empty',
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+    child_process: 'empty'
   }
 }
 
-
 module.exports = vuxLoader.merge(webpackConfig, {
-  plugins: [
-    'vux-ui',
-    'progress-bar',
-    {
-      name: 'duplicate-style',
-      options: {
-        cssProcessorOptions : {
-          safe: true,
-          zindex: false,
-          autoprefixer: {
-            add: true,
-            browsers: [
-              'iOS >= 7',
-              'Android >= 4.1'
-            ]
-          }
-        }
-      }
-    }
-  ]
+  plugins: ['vux-ui']
 })

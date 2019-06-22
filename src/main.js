@@ -1,28 +1,28 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from "vue";
-import FastClick from "fastclick";
-import VueRouter from "vue-router";
-import App from "./App";
-import Home from "./components/HelloFromVux";
-Vue.use(VueRouter);
+import Vue from 'vue'
+import App from './App'
+import router from './router'
+import store from './store'
+import '@/filters'
+import "babel-polyfill"
+import 'lib-flexible/flexible'
+import '@/assets/scss/index.scss'
 
+import FastClick from 'fastclick'
+FastClick.attach(document.body)
 
-const routes = [{
-  path: "/",
-  component: Home
-}];
+import VueScroller from 'vue-scroller'
+Vue.use(VueScroller)
 
-const router = new VueRouter({
-  routes
-});
+import transition from '@/components/layout/transition';
+Vue.component('lg-transition', transition);
 
-FastClick.attach(document.body);
-
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
+  el: '#app',
   router,
-  render: h => h(App)
-}).$mount("#app-box");
+  store,
+  components: { App },
+  template: '<App/>'
+})
