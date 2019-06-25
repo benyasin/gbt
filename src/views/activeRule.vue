@@ -58,6 +58,7 @@
             padding:22px 15px;
             box-sizing: border-box;
             overflow-y: auto;
+            @extend .resetScrollBar;
             @include flex-row(column,flex-start);
             .active-rule-contet-item{
                 margin-bottom: 20px;

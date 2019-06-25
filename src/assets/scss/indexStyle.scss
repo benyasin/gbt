@@ -4,6 +4,7 @@
     background-color: $cBg;
     font-size: 12px;
     text-align: center;
+    &::-webkit-scrollbar { width: 0 !important }
   }
   .bg{
     width: 100%;

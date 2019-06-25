@@ -48,6 +48,7 @@
       padding:22px 15px;
       box-sizing: border-box;
       overflow-y: auto;
+      @extend .resetScrollBar;
       .info{
         height: 87px;
         @include flex-row(row,space-around);

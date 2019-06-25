@@ -57,3 +57,8 @@ $cBg:#001436;
     color:#6A6A6A;
   }
 }
+.resetScrollBar{
+  &::-webkit-scrollbar { width: 0 !important }
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+}
