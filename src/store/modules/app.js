@@ -1,6 +1,6 @@
 const app = {
     state: {
-        direction: 'tip',       //tip或者swiper(点击返回还是滑动返回)
+        direction: 'swiper',       //tip或者swiper(点击返回还是滑动返回)
     },
     mutations: {
         SET_DIRECTION: (state, direction) => {

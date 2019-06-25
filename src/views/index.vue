@@ -9,7 +9,7 @@
                            <div class="wrap">
                                <span>抢活跃排位</span>
                                <span>再赢金蛋得积分</span>
-                              <button class="btn">活动规则 <img class="btn-img" src="../assets/img/rightbtn.png" alt=""></button>
+                              <button class="btn" @click="toRouterActiveRule">活动规则 <img class="btn-img" src="../assets/img/rightbtn.png" alt=""></button>
                            </div>
                        </flexbox-item>
                    </flexbox>
@@ -36,12 +36,12 @@
            </div>
            <div class="operation">
                <div class="operation-page">
-                   <button class="btn operation-btn"><img src="../assets/img/comment.png" width="47px" alt=""></button>
+                   <button @click="toRouter('dialog')" class="btn operation-btn"><img src="../assets/img/comment.png" width="47px" alt=""></button>
                    <div class="operation-text" v-show="!status">
                        <div>你还未预言哦</div>
                        <div>截止下一个交易日13:00</div>
                    </div>
-                   <button class="btn operation-btn"><img src="../assets/img/gift.png" width="47px" alt=""></button>
+                   <button @click="toRouter('price')" class="btn operation-btn"><img src="../assets/img/gift.png" width="47px" alt=""></button>
                </div>
                <div class="user-operation">
                    <div class="date">
@@ -65,12 +65,12 @@
                        <p class="p1">预计下一个交易日15:15结果揭晓</p>
                    </div>
                </div>
-               <div>用户每个交易日涨跌仅可预言一次,每次可投20-1000ultrain积分</div>
+               <div>每个交易日涨跌仅可预言一次,每次可投20-200ultrain积分</div>
            </div>
        </div>
        <div class="record">
            <div class="record-info">
-               <div class="prophecy">
+               <div class="prophecy" @click="toRouter('prophecy')">
                    <span>预言记录</span>
                    <img src="../assets/img/arrowR.png" width="5px" height="10px" alt="">
                </div>
@@ -97,7 +97,7 @@
                        </div>
                    </swiper-item>
                </swiper>
-               <button class="btn list-block list-block-btn" @click="handleToMine(tabIndex)"><span>查看更多</span></button>
+               <button class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
            </div>
        </div>
         <div v-transfer-dom>
@@ -128,7 +128,6 @@
                         <button @click="sureClose" style="background: none;border:0;padding:0;margin-top:32px;"><img width="100%" src="../assets/img/sure.png" alt=""></button>
                     </div>
                 </div>
-
             </x-dialog>
         </div>
     </div>
@@ -136,6 +135,7 @@
 
 <script>
 import { Flexbox, FlexboxItem,Group,Cell,ButtonTab, ButtonTabItem,Swiper, SwiperItem,XDialog, TransferDomDirective as TransferDom } from 'vux'
+import '../assets/scss/indexStyle.scss'
 export default {
     directives: {
         TransferDom
@@ -186,8 +186,9 @@ export default {
         }
     },
     methods:{
-        handleTab(val){},
-        handleToMine(){},
+        handleTab(val){console.log(val)},
+        handleToMore(index){
+        },
         animationPlay:function () {
           let ele = this.$refs.dialogue
         },
@@ -202,6 +203,13 @@ export default {
         sureClose(){
             this.showDialogGlodEgg=false
         },
+        toRouter(name){
+            let index = name=='prophecy'?0:1
+            name=='prophecy'||name=='price'?this.$router.push({name:'Mine',params:{index:index}}):this.$router.push('MessageBoard')
+        },
+        toRouterActiveRule(){
+            this.$router.push('ActiveRule')
+        },
     },
     mounted() {
         this.animationPlay()
@@ -214,256 +222,3 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-  .btc-index{
-    background-color: #001436;
-    font-size: 12px;
-    text-align: center;
-      .btn{
-          background:none;
-          border:0;
-          margin:0;
-          padding:0;
-      }
-      .bg{
-          width: 100%;
-          height:609px;
-          background-image:url("../assets/img/bg.png");
-          background-size: 100%;
-          background-repeat:no-repeat;
-          .header{
-              width:100%;
-              height:207px;
-              padding-top: 47px;
-              box-sizing: border-box;
-              .title{
-                  height:56px;
-              }
-              .wrap{
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-              }
-              .decs{
-                  margin:14px 0;
-                  color:rgba(255,255,255,.28);
-                  font-size: 12px;
-                  .btn{
-                      margin-left: 11px;
-                      width:72px;
-                      height:20px;
-                      border-radius: 9px;
-                      background-color: rgba(255,255,255,.13);
-                      font-size: 10px;
-                      color:rgba(255,255,255,.28);
-                      border:0;
-                      .btn-img{
-                          width: 6px;
-                          margin-top:4px;
-                      }
-                  }
-              }
-              .prize-pool{
-                  .comment{
-                      font-size: 14px;
-                      color:#78BAECFF;
-                  }
-                  .count{
-                      display: inline-block;
-                      width: 19px;
-                      height:28px;
-                      margin:0 7px;
-                      background-color: #0A2A5BFF;
-                      border-radius: 4px;
-                      font-size: 24px;
-                      line-height: 28px;
-                      color:#FFD600FF;
-                      text-align: center;
-                  }
-              }
-          }
-          .dialogue{
-              margin-top: 15px;
-              height:135px;
-              overflow: hidden;
-              padding-left: 18px;
-              box-sizing: border-box;
-              .dialogue-wrap{
-                  position: relative;
-                  text-align: left;
-                  margin-bottom: 10px;
-                  height:17px;
-                  .img{
-                      width: 13px;
-                      height: 13px;
-                      border-radius: 13px;
-                      position: absolute;
-                      left:2px;
-                      top:2px;
-                  }
-                  .word{
-                      display: inline-block;
-                      box-sizing: border-box;
-                      height:17px;
-                      line-height: 17px;
-                      padding: 0 10px 0 19px;
-                      background:#0C2A5B;
-                      border-radius: 9px;
-                      font-size: 11px;
-                      color:#619BCC;
-                  }
-              }
-          }
-          .operation{
-              margin-top: 5px;
-              padding:0 16px;
-              box-sizing: border-box;
-              color:#365E87;
-              font-size: 11px;
-              line-height: 17px;
-              .operation-page{
-                  display: flex;
-                  justify-content: space-between;
-                  .operation-btn{
-                      width: 47px;
-                      height:47px;
-                      border-radius: 47px;
-                  }
-                  .operation-text{
-                      flex:1;
-                      margin-top: 14px
-                  }
-              }
-              .user-operation{
-                  margin:13px 0 18px;
-                  padding:12px 14px 0;
-                  height:140px;
-                  background:#0C2A5B;
-                  border-radius: 8px;
-                  .date{
-                      font-size: 14px;
-                      .sp1{
-                          color:#fff;
-                      }
-                      .sp2{
-                          color:#FF5E4D;
-                      }
-                  }
-                  .rate{
-                    width: 100%;
-                    display: flex;
-                    flex-direction: row;
-                    height: 15px;
-                    margin:12px 0;
-                      .bar{
-                          height: 100%;
-                      }
-                  }
-                  .guess-btn{
-                      display: flex;
-                      flex-direction: row;
-                      justify-content: space-between;
-                      .guess-sub-btn{
-                          margin-right: 5px;
-                      }
-                  }
-                  .guessed-text{
-                      font-size: 14px;
-                      color:#fff;
-                      line-height: 20px;
-                      padding-top: 8px;
-                      .p1{
-                          font-size: 12px;
-                          color:rgba(255,255,255,.56);
-                          line-height: 17px;
-                      }
-                  }
-              }
-          }
-      }
-      .record{
-          padding:23px 18px 15px;
-          height:642px;
-          background-color:#F5F5F5;
-          border-top-right-radius: 22px;
-          border-top-left-radius: 22px;
-          .record-info{
-              padding:5px 14px 0 18px;
-              height:122px;
-              border-radius: 13px;
-              background-color: #fff;
-              text-align: left;
-              .prophecy{
-                  height: 57px;
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-              }
-              .info{
-                  display: flex;
-                  justify-content: space-around;
-                  text-align: center;
-                  .rank{
-                      font-size: 14px;
-                      color: #0072FF;
-                      line-height: 20px;
-                  }
-                  .desc{
-                      font-size: 12px;
-                      color:rgba(0,0,0,.37);
-                      line-height: 17px;
-                  }
-              }
-          }
-          .record-tab{
-              margin-top: 28px;
-              .record-desc{
-                  margin:17px 0;
-                  height:18px;
-                  text-align: left;
-                  font-size: 11px;
-                  color:rgba(51, 51, 51, .4)
-              }
-              .list-block{
-                  padding:0 14px 0 17px;
-                  box-sizing: border-box;
-                  display: flex;
-                  align-items: center;
-                  margin-bottom: 5px;
-                  height:55px;
-                  background-color: #fff;
-                  border-radius: 8px;
-                  .sp1{
-                      font-size: 18px;
-                      color:#666;
-                      margin-right: 18px;
-                  }
-                  .sp2{
-                      font-size: 13px;
-                      color:#333;
-                      margin-left: 10px;
-                  }
-                  .sp3{
-                      flex:1;
-                      font-size: 13px;
-                      color: #0072FF;
-                      text-align: right;
-                      .sp4{
-                          font-size: 10px;
-                          color:#AAAAAA;
-                      }
-                  }
-              }
-              .list-block-btn{
-                  margin-top: 5px;
-                  width: 100%;
-                  height:30px;
-                  display: flex;
-                  justify-content: center;
-                  font-size: 12px;
-                  color:#aaa;
-              }
-          }
-      }
-  }
-</style>

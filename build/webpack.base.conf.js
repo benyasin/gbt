@@ -83,5 +83,8 @@ const webpackConfig = {
 }
 
 module.exports = vuxLoader.merge(webpackConfig, {
-  plugins: ['vux-ui']
+  plugins: [
+    {name:'vux-ui'},
+    {name:'scss-theme',path:'src/assets/scss/theme.scss'}
+  ]
 })

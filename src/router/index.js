@@ -2,6 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/store'
 import Index from '@/views/index'
+import Mine from '@/views/mine'
+import MineDetails from '@/views/mineDetails'
+import MessageBoard from '@/views/messageBoard'
+import ActiveRule from '@/views/activeRule'
 
 Vue.use(Router)
 
@@ -20,6 +24,26 @@ const router =  new Router({
       path: '/',
       name: 'Index',
       component: Index,
+    },
+    {
+      path: '/mine',
+      name: 'Mine',
+      component: Mine,
+    },
+    {
+      path: '/mineDetails',
+      name: 'MineDetails',
+      component: MineDetails,
+    },
+    {
+      path: '/activeRule',
+      name: 'ActiveRule',
+      component: ActiveRule,
+    },
+    {
+      path: '/messageBoard',
+      name: 'MessageBoard',
+      component: MessageBoard,
     }
   ]
 })

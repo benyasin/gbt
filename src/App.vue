@@ -1,13 +1,13 @@
 <template>
-  <lg-app></lg-app>
+  <lg-transition></lg-transition>
 </template>
 
 <script>
-import app from '@/components/layout/app'
+import transition from '@/components/layout/transition'
 export default {
   name: 'App',
   components: {
-    'lg-app':app,
+    'lg-transition':transition,
   }
 }
 </script>

@@ -23,6 +23,6 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { App },
-  template: '<App/>'
+  components: { transition },
+  template: '<transition/>'
 })
