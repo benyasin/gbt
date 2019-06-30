@@ -65,7 +65,7 @@
                        <p class="p1">预计下一个交易日15:15结果揭晓</p>
                    </div>
                </div>
-               <div>每个交易日涨跌仅可预言一次,每次可投20-200ultrain积分</div>
+               <div>每个交易日涨跌仅可预言一次,每次可投20-500ultrain积分</div>
            </div>
        </div>
        <div class="record">
@@ -86,9 +86,9 @@
                    <button-tab-item @on-item-click="handleTab">活跃度排行</button-tab-item>
                    <button-tab-item @on-item-click="handleTab">胜率排行</button-tab-item>
                </button-tab>
-               <div class="record-desc"><span v-show="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span></div>
+               <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span v-else>太棒了！继续加油哦</span></div>
                <swiper v-model="tabIndex" height="355px" :show-dots="false">
-                   <swiper-item v-for="(item, index) in tablist" :key="index">
+                   <swiper-item style="min-height: 355px" v-for="(item, index) in tablist" :key="index">
                        <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
                            <span class="sp1">{{itm.rank}}</span>
                            <img width="32px" height="32px" src="../assets/img/comment.png" alt="">
@@ -97,7 +97,7 @@
                        </div>
                    </swiper-item>
                </swiper>
-               <button class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
+               <button v-show="tableData[tablist[tabIndex]].length==6" class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
            </div>
        </div>
         <div v-transfer-dom>
@@ -107,9 +107,9 @@
                         <x-icon @click="showDialog = false" type="ios-close-empty" size="24" style="fill:#7A8496;"></x-icon>
                     </div>
                     <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{date}}大盘指数涨跌</p>
-                    <p style="display: flex;justify-content: space-between;margin:30px 0 15px;"><span style="color: #78BAEC">请选择预言积分数</span><span style="color: #fff">我的积分:22222</span></p>
+                    <p style="display: flex;justify-content: space-between;margin:30px 0 15px;"><span style="color: #78BAEC">每次预言扣除2积分手续费</span><span style="color: #fff">我的积分:22222222</span></p>
                     <div style="display: flex;justify-content: space-between">
-                        <button style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in selectCount">{{item}}</button>
+                        <button :style="{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'}" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in countlist">{{item}}</button>
                     </div>
                     <button v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
                     <button v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
@@ -168,9 +168,11 @@ export default {
                     {name:'小美人',avatar:'',rank:'1',decs:'3232'}],
                 '胜率排行':[{name:'胜率',avatar:'',rank:'1',decs:'100%'},
                     {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
+                    {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
+                    {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
                     {name:'lallafdfs',avatar:'',rank:'1',decs:'100%'}]},
             poolCount:[1,2,3,4,2,3],
-            selectCount:[20,50,100,200],
+            countlist:[20,100,200,500],
             dialogueList:[
                 {avatar:'../assets/img/gold.png',words:'aaaaaa'},
                 {avatar:'../assets/img/gold.png',words:'hhhhhhhhh'},
@@ -183,20 +185,24 @@ export default {
                 {avatar:'../assets/img/gold.png',words:'是大风大风大风大风大风大风大风大风大是大非上'},
                 {avatar:'../assets/img/gold.png',words:'放松放松放松放松放松对方的身份是大风大风当时发生的发生的放松放松的方式发呆'},
             ],
+            selectCount:[],
         }
     },
     methods:{
-        handleTab(val){console.log(val)},
+        handleTab(val){},
         handleToMore(index){
+            this.$router.push({name:'More',params:{index:index}})
         },
         animationPlay:function () {
           let ele = this.$refs.dialogue
         },
         lookUp(){
+            this.selectCount=[]
             this.showDialog=true
             this.statusUpDown='up'
         },
         lookDown(){
+            this.selectCount=[]
             this.showDialog=true
             this.statusUpDown='down'
         },
@@ -209,6 +215,23 @@ export default {
         },
         toRouterActiveRule(){
             this.$router.push('ActiveRule')
+        },
+        handleSelectCount(item){
+            let arr = this.selectCount
+            let target = arr.filter(function (a) {
+                return a==item
+            })
+            if(target.length){
+                let array=arr.filter(function (b) {
+                    return b!=item
+                })
+                this.selectCount=array
+            }else{
+               arr.pop()
+               arr.push(item)
+               this.selectCount=arr
+            }
+            console.log(this.selectCount.toString())
         },
     },
     mounted() {

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import store from '@/store'
 import Index from '@/views/index'
 import Mine from '@/views/mine'
+import More from '@/views/more'
 import MineDetails from '@/views/mineDetails'
 import MessageBoard from '@/views/messageBoard'
 import ActiveRule from '@/views/activeRule'
@@ -29,6 +30,11 @@ const router =  new Router({
       path: '/mine',
       name: 'Mine',
       component: Mine,
+    },
+    {
+      path: '/more',
+      name: 'More',
+      component: More,
     },
     {
       path: '/mineDetails',

@@ -113,6 +113,26 @@
               @include flex-row(row,flex-end);
             }
           }
+          .sp1-more{
+            font-size: 18px;
+            color:#666;
+            margin-right: 18px;
+          }
+          .sp2-more{
+            font-size: 13px;
+            color:#333;
+            margin-left: 10px;
+          }
+          .sp3-more{
+            flex:1;
+            font-size: 13px;
+            color: $cBlue;
+            text-align: right;
+            .sp4-more{
+              font-size: 10px;
+              color:$cGray;
+            }
+          }
         }
       }
     }
