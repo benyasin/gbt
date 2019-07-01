@@ -134,6 +134,9 @@
 </template>
 
 <script>
+
+import {createU3} from "u3.js"
+import config from "../../config/ultrain"
 import { Flexbox, FlexboxItem,Group,Cell,ButtonTab, ButtonTabItem,Swiper, SwiperItem,XDialog, TransferDomDirective as TransferDom } from 'vux'
 import '../assets/scss/indexStyle.scss'
 export default {
@@ -233,6 +236,15 @@ export default {
             }
             console.log(this.selectCount.toString())
         },
+    },
+    async created(){
+        const u3 = createU3(config);
+        const balance = await u3.getCurrencyBalance({
+          code: config.pointAccount,
+          account: config.poolAccount,
+          symbol: config.symbol
+        });
+        console.log(balance)
     },
     mounted() {
         this.animationPlay()
