@@ -30,15 +30,16 @@ export default instance;
  * 封装所有请求
  * @param methed
  * @param url
- * @param data 
+ * @param data
  * @param headers
  * @returns {Promise}
  */
+/*
 export function request(methed,url, data = {},headers) {
     return new Promise((resolve, reject) => {
         instance({
             method: methed || 'post',
-            url:url,
+            url: url,
             data: methed !== 'get' ? data : '',
             params: methed === 'get' ? data :'',
             headers: headers || {'Content-Type':'application/json'},
@@ -51,3 +52,4 @@ export function request(methed,url, data = {},headers) {
         })
     })
 }
+*/

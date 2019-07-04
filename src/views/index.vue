@@ -29,10 +29,12 @@
                </div>
            </div>
            <div class="dialogue" ref="dialogue">
-               <div class="dialogue-wrap" v-for="(usr,index) in dialogueList">
-                   <img class="img" src="../assets/img/gold.png">
-                   <span class="word">{{usr.words}}</span>
-               </div>
+               <ul>
+                   <li class="dialogue-wrap" v-for="(usr,index) in dialogueList">
+                       <img class="img" src="../assets/img/gold.png">
+                       <span class="word">{{usr.words}}</span>
+                   </li>
+               </ul>
            </div>
            <div class="operation">
                <div class="operation-page">
@@ -57,8 +59,8 @@
                        </div>
                    </div>
                    <div class="guess-btn" v-show="!status">
-                       <button @click="lookUp" class="btn guess-sub-btn"><img width="100%" src="../assets/img/redbtn.png" alt=""></button>
-                       <button @click="lookDown" class="btn"><img width="100%" src="../assets/img/greenbtn.png" alt=""></button>
+                       <button @click="lookUpDown('up')" class="btn guess-sub-btn"><img width="100%" src="../assets/img/redbtn.png" alt=""></button>
+                       <button @click="lookUpDown('down')" class="btn"><img width="100%" src="../assets/img/greenbtn.png" alt=""></button>
                    </div>
                    <div class="guessed-text" v-show="status">
                        <p>您已预言<span style="color:#C34E4C">涨</span><span style="color:#36884A">跌</span></p>
@@ -83,8 +85,8 @@
            </div>
            <div class="record-tab">
                <button-tab v-model="tabIndex">
-                   <button-tab-item @on-item-click="handleTab">活跃度排行</button-tab-item>
-                   <button-tab-item @on-item-click="handleTab">胜率排行</button-tab-item>
+                   <button-tab-item>活跃度排行</button-tab-item>
+                   <button-tab-item>胜率排行</button-tab-item>
                </button-tab>
                <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span v-else>太棒了！继续加油哦</span></div>
                <swiper v-model="tabIndex" height="355px" :show-dots="false">
@@ -109,10 +111,10 @@
                     <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{date}}大盘指数涨跌</p>
                     <p style="display: flex;justify-content: space-between;margin:30px 0 15px;"><span style="color: #78BAEC">每次预言扣除2积分手续费</span><span style="color: #fff">我的积分:22222222</span></p>
                     <div style="display: flex;justify-content: space-between">
-                        <button :style="{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'}" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in countlist">{{item}}</button>
+                        <button :style="[{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'},{color:selectCount.indexOf(item)>-1?'#001436':'#fff'}]" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in countlist">{{item}}</button>
                     </div>
-                    <button v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
-                    <button v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
+                    <button @click="sureGuess('red')" v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
+                    <button @click="sureGuess('green')" v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
                 </div>
             </x-dialog>
         </div>
@@ -191,23 +193,37 @@ export default {
             selectCount:[],
         }
     },
+    created(){
+        this.initData()
+    },
     methods:{
-        handleTab(val){},
-        handleToMore(index){
-            this.$router.push({name:'More',params:{index:index}})
+        initData(){
+            this.getDialog()
         },
-        animationPlay:function () {
-          let ele = this.$refs.dialogue
+        getDialog(){
+            this.axios.get(this.GLOBAL.baseUrl+'/chat')
+                .then((res)=>{
+                    let {code,data} = res
+                    if(code==200){
+                        this.dialogueList=data
+                    }
+                })
+                .catch(err=>console.log(err))
         },
-        lookUp(){
+        getPrizepoll(){
+            this.axios.get(this.GLOBAL.baseUrl+'/chat')
+                .then((res)=>{
+                    let {code,data} = res
+                    if(code==200){
+
+                    }
+                })
+                .catch(err=>console.log(err))
+        },
+        lookUpDown(val){
             this.selectCount=[]
             this.showDialog=true
-            this.statusUpDown='up'
-        },
-        lookDown(){
-            this.selectCount=[]
-            this.showDialog=true
-            this.statusUpDown='down'
+            this.statusUpDown=val
         },
         sureClose(){
             this.showDialogGlodEgg=false
@@ -219,6 +235,10 @@ export default {
         toRouterActiveRule(){
             this.$router.push('ActiveRule')
         },
+        handleToMore(index){
+            this.$router.push({name:'More',params:{index:index}})
+        },
+        // 选择预言积分
         handleSelectCount(item){
             let arr = this.selectCount
             let target = arr.filter(function (a) {
@@ -236,6 +256,13 @@ export default {
             }
             console.log(this.selectCount.toString())
         },
+        // 提交预言
+        sureGuess(val){
+            this.showDialog=false
+        },
+        animationPlay:function () {
+            let ele = this.$refs.dialogue.querySelectorAll('ul')
+        },
     },
     async created(){
         const u3 = createU3(config);
@@ -247,8 +274,7 @@ export default {
         console.log(balance)
     },
     mounted() {
-        this.animationPlay()
-       /* this.intervalId = setInterval(() => {
+        /*this.intervalId = setInterval(() => {
             this.animationPlay()
         }, 2000)*/
     },
