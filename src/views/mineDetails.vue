@@ -11,12 +11,12 @@
                     <span>预言方向</span>
                     <span>
                         <span>看</span>
-                    <span :class="itmData.deraction=='up'?'redColor':'greenColor'">{{itmData.deraction=='up'?'涨':'跌'}}</span>
+                    <span :class="itmData.predictResult>0?'redColor':'greenColor'">{{itmData.predictResult>0?'涨':'跌'}}</span>
                     </span>
                 </p>
                 <p class="item">
                     <span>预言积分</span>
-                    <span>{{itmData.count}}积分</span>
+                    <span>{{itmData.predictValue}}积分</span>
                 </p>
                 <p class="item">
                     <span>预言时间</span>
@@ -26,22 +26,23 @@
             <div class="result-block">
                 <p class="item">
                     <span class="title">预言记录</span>
-                    <span class="title">{{itmData.result | filterResult}}</span>
+                    <span v-if="!itmData.isFinished" class="title">待公布</span>
+                    <span v-else class="title">{{itmData.predictResult==itmData.actualResult?'预言成功':'预言失败'}}</span>
                 </p>
                 <p class="item">
                     <span>交易日</span>
                     <span>{{itmData.date}}</span>
                 </p>
-                <p class="item" v-if="itmData.result!=0">
+                <p class="item" v-if="itmData.isFinished">
                     <span>BTC方向</span>
                     <span>
                         <span>收</span>
-                        <span :class="itmData.resultDeraction==1?'redColor':'greenColor'">{{itmData.resultDeraction=='1'?'涨':'跌'}}</span>
+                        <span :class="itmData.actualResult>0?'redColor':'greenColor'">{{itmData.actualResult>0?'涨':'跌'}}</span>
                     </span>
                 </p>
-                <p class="item" v-if="itmData.result!=0">
+                <p class="item" v-if="itmData.isFinished">
                     <span>预言奖励</span>
-                    <span>{{itmData.price}}积分</span>
+                    <span>{{itmData.actualValue}}积分</span>
                 </p>
             </div>
         </div>
@@ -63,18 +64,6 @@
         methods:{
             goback(){
                 this.$router.go(-1)
-            },
-        },
-        filters:{
-            filterResult(val){
-                console.log(val)
-                if(val==='0'){
-                    return '待公布'
-                }else if(val==='1'){
-                    return '预言成功'
-                }else{
-                    return '预言失败'
-                }
             },
         },
     }

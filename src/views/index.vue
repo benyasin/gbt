@@ -31,8 +31,8 @@
            <div class="dialogue" ref="dialogue">
                <ul>
                    <li class="dialogue-wrap" v-for="(usr,index) in dialogueList">
-                       <img class="img" src="../assets/img/gold.png">
-                       <span class="word">{{usr.words}}</span>
+                       <img class="img" :src="usr.avatar">
+                       <span class="word">{{usr.content}}</span>
                    </li>
                </ul>
            </div>
@@ -47,8 +47,8 @@
                </div>
                <div class="user-operation">
                    <div class="date">
-                       <span class="sp1">6月20日BTC指数</span>
-                       <span class="sp2">2987.12 +23%</span>
+                       <span class="sp1">{{date}}BTC指数</span>
+                       <span class="sp2">{{userOperation.price}} {{userOperation.ratio}}</span>
                    </div>
                    <div class="rate">
                        <div class="bar" style="width: 59%">
@@ -63,7 +63,7 @@
                        <button @click="lookUpDown('down')" class="btn"><img width="100%" src="../assets/img/greenbtn.png" alt=""></button>
                    </div>
                    <div class="guessed-text" v-show="status">
-                       <p>您已预言<span style="color:#C34E4C">涨</span><span style="color:#36884A">跌</span></p>
+                       <p>您已预言<span v-if="userInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else style="color:#36884A">跌</span></p>
                        <p class="p1">预计下一个交易日15:15结果揭晓</p>
                    </div>
                </div>
@@ -77,10 +77,10 @@
                    <img src="../assets/img/arrowR.png" width="5px" height="10px" alt="">
                </div>
                <div class="info">
-                    <div><p class="rank">999+</p><p class="desc">活跃度排行</p></div>
-                    <div><p class="rank">999+</p><p class="desc">胜率排行</p></div>
-                    <div><p class="rank">100%</p><p class="desc">胜率</p></div>
-                    <div><p class="rank">3次</p><p class="desc">预言战绩</p></div>
+                    <div><p class="rank">{{userInfo.predictRank}}</p><p class="desc">活跃度排行</p></div>
+                    <div><p class="rank">{{userInfo.winRank}}</p><p class="desc">胜率排行</p></div>
+                    <div><p class="rank">{{userInfo.winRatio*100}}%</p><p class="desc">胜率</p></div>
+                    <div><p class="rank">{{userInfo.predictTimes}}</p><p class="desc">预言战绩</p></div>
                </div>
            </div>
            <div class="record-tab">
@@ -93,13 +93,13 @@
                    <swiper-item style="min-height: 355px" v-for="(item, index) in tablist" :key="index">
                        <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
                            <span class="sp1">{{itm.rank}}</span>
-                           <img width="32px" height="32px" src="../assets/img/comment.png" alt="">
-                           <span class="sp2">{{itm.name}}</span>
-                           <span class="sp3">{{itm.decs}}<span class="sp4" v-if="tabIndex==0">活跃度</span></span>
+                           <img width="32px" height="32px" :src="itm.avatar" alt="">
+                           <span class="sp2">{{itm.username}}</span>
+                           <span class="sp3"><span v-if="tabIndex==0">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span class="sp4" v-if="tabIndex==0">活跃度</span></span>
                        </div>
                    </swiper-item>
                </swiper>
-               <button v-show="tableData[tablist[tabIndex]].length==6" class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
+               <button class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
            </div>
        </div>
         <div v-transfer-dom>
@@ -108,13 +108,13 @@
                     <div style="text-align: right;margin-right: -4px">
                         <x-icon @click="showDialog = false" type="ios-close-empty" size="24" style="fill:#7A8496;"></x-icon>
                     </div>
-                    <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{date}}大盘指数涨跌</p>
+                    <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{nextDate}}大盘指数涨跌</p>
                     <p style="display: flex;justify-content: space-between;margin:30px 0 15px;"><span style="color: #78BAEC">每次预言扣除2积分手续费</span><span style="color: #fff">我的积分:22222222</span></p>
                     <div style="display: flex;justify-content: space-between">
                         <button :style="[{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'},{color:selectCount.indexOf(item)>-1?'#001436':'#fff'}]" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in countlist">{{item}}</button>
                     </div>
-                    <button @click="sureGuess('red')" v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
-                    <button @click="sureGuess('green')" v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
+                    <button @click="sureGuess('up')" v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
+                    <button @click="sureGuess('down')" v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
                 </div>
             </x-dialog>
         </div>
@@ -132,15 +132,18 @@
                 </div>
             </x-dialog>
         </div>
+        <toast v-model="showToast" type="text">{{errorMsg}}</toast>
     </div>
 </template>
 
 <script>
 
 import {createU3} from "u3.js"
+import store from '../store'
 import config from "../../config/ultrain"
-import { Flexbox, FlexboxItem,Group,Cell,ButtonTab, ButtonTabItem,Swiper, SwiperItem,XDialog, TransferDomDirective as TransferDom } from 'vux'
+import { Flexbox, FlexboxItem,Group,Cell,ButtonTab, ButtonTabItem,Swiper, SwiperItem,XDialog, TransferDomDirective as TransferDom ,Toast} from 'vux'
 import '../assets/scss/indexStyle.scss'
+import {mapGetters} from 'vuex'
 export default {
     directives: {
         TransferDom
@@ -152,11 +155,10 @@ export default {
         Cell,
         ButtonTab, ButtonTabItem,
         Swiper, SwiperItem,
-        XDialog,
+        XDialog,Toast
     },
     data(){
         return {
-            date:'6月19日',
             status:false,
             statusUpDown:'up',
             showDialog:false,
@@ -164,52 +166,40 @@ export default {
             intervalId: null,
             tabIndex:0,
             tablist:['活跃度排行','胜率排行'],
-            tableData:{
-                '活跃度排行':[{name:'小美人',avatar:'',rank:'1',decs:'3233'},
-                    {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                    {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                    {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                    {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                    {name:'小美人',avatar:'',rank:'1',decs:'3232'}],
-                '胜率排行':[{name:'胜率',avatar:'',rank:'1',decs:'100%'},
-                    {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
-                    {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
-                    {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
-                    {name:'lallafdfs',avatar:'',rank:'1',decs:'100%'}]},
+            tableData:{},
             poolCount:[1,2,3,4,2,3],
             countlist:[20,100,200,500],
-            dialogueList:[
-                {avatar:'../assets/img/gold.png',words:'aaaaaa'},
-                {avatar:'../assets/img/gold.png',words:'hhhhhhhhh'},
-                {avatar:'../assets/img/gold.png',words:'莫名其妙'},
-                {avatar:'../assets/img/gold.png',words:'涨啊'},
-                {avatar:'../assets/img/gold.png',words:'一定跌'},
-                {avatar:'../assets/img/gold.png',words:'开聊'},
-                {avatar:'../assets/img/gold.png',words:'你怎么看待，明天肯定'},
-                {avatar:'../assets/img/gold.png',words:'大家好'},
-                {avatar:'../assets/img/gold.png',words:'是大风大风大风大风大风大风大风大风大是大非上'},
-                {avatar:'../assets/img/gold.png',words:'放松放松放松放松放松对方的身份是大风大风当时发生的发生的放松放松的方式发呆'},
-            ],
+            dialogueList:[],
             selectCount:[],
+            showToast:false,
+            errorMsg:'',
+            userOperation:{
+                price:'',
+                ratio:'',
+            },
         }
     },
     created(){
-        this.initData()
+        this.getPersonInfo()
+    },
+    computed:{
+        ...mapGetters([
+            'userInfo',
+        ]),
+        date(){
+            let now = new Date()
+            let m = now.getMonth() + 1
+            let d = now.getDay()
+            return m + '月' + d + '日'
+        },
+        nextDate(){
+            let now = new Date()
+            let m = now.getMonth() + 1
+            let d = now.getDay()+1
+            return m + '月' + d + '日'
+        }
     },
     methods:{
-        initData(){
-            this.getDialog()
-        },
-        getDialog(){
-            this.axios.get(this.GLOBAL.baseUrl+'/chat')
-                .then((res)=>{
-                    let {code,data} = res
-                    if(code==200){
-                        this.dialogueList=data
-                    }
-                })
-                .catch(err=>console.log(err))
-        },
         getPrizepoll(){
             this.axios.get(this.GLOBAL.baseUrl+'/chat')
                 .then((res)=>{
@@ -220,8 +210,96 @@ export default {
                 })
                 .catch(err=>console.log(err))
         },
+        async getPersonInfo(){
+            let perdictInfo = await this.getPersonUrl('/predict/personal')
+            let rankInfo = await this.getPersonUrl('/rank/personal')
+            if(perdictInfo==null){
+                this.status = false
+            }else{
+                this.status = true
+                let obj = {
+                    avatar: rankInfo.avatar,
+                    predictRank: rankInfo.predictRank,
+                    predictTimes: rankInfo.predictTimes,
+                    winRank: rankInfo.winRank,
+                    winRatio: rankInfo.winRatio,
+                    winTimes: rankInfo.winTimes,
+                    date: perdictInfo.date,
+                    isFinished: perdictInfo.isFinished,
+                    predictResult: perdictInfo.predictResult,
+                    predictValue: perdictInfo.predictValue,
+                    userId: perdictInfo.userId,
+                    username: perdictInfo.username,
+                    _id: perdictInfo._id,
+                }
+                store.commit('SET_USERINFO', obj);
+            }
+        },
+        getPersonUrl(url){
+            const promise = new Promise((resolve,reject)=>{
+                let userId = 'rku2pvlH7'
+              this.axios.get(this.GLOBAL.baseUrl+url+`?userId=${userId}`)
+                  .then((res)=>{
+                      let {state,data}=res.data
+                      state=='success'?resolve(data):resolve(null)
+                  }).catch((err)=>{
+                      reject(err)
+              })
+            })
+            return promise
+        },
+        async getTableData(){
+            let map = new Map()
+            let obj={}
+            let activelist = await this.getDataUrl('/rank/activeList')
+            let winlist = await this.getDataUrl('/rank/winList')
+            map.set('活跃度排行',activelist)
+            map.set('胜率排行',winlist)
+            for(let [key,value] of map){
+                obj[key] = value
+            }
+            this.tableData = obj
+        },
+        getDataUrl(url){
+            const promise = new Promise((resolve,reject)=>{
+                this.axios.get(this.GLOBAL.baseUrl + url)
+                    .then((res)=>{
+                        let {state,data} = res.data
+                        state=='success'?resolve(data):resolve([])
+                    }).catch((err)=>{
+                        reject(err)
+                })
+            })
+            return promise
+        },
+        getChatList(){
+            this.axios.get(this.GLOBAL.baseUrl+'/chat/list')
+                .then((res)=>{
+                    let {state,message,data} = res.data
+                    if(state=='success'){
+                        this.dialogueList = data
+                    }else{
+                        this.showToast= true
+                        this.errorMsg = message
+                    }
+                })
+                .catch((err)=>console.log(err))
+        },
+        getLatestIndex(){
+            this.axios.get(this.GLOBAL.baseUrl+'/predict/latestIndex')
+                .then((res)=>{
+                    let {state,message,data} = res.data
+                    if(state=='success'){
+                        this.userOperation = data
+                    }else{
+                        this.showToast= true
+                        this.errorMsg = message
+                    }
+                })
+                .catch((err)=>console.log(err))
+        },
         lookUpDown(val){
-            this.selectCount=[]
+            this.selectCount= []
             this.showDialog=true
             this.statusUpDown=val
         },
@@ -254,11 +332,23 @@ export default {
                arr.push(item)
                this.selectCount=arr
             }
-            console.log(this.selectCount.toString())
         },
         // 提交预言
         sureGuess(val){
-            this.showDialog=false
+            let params = {
+                phoneNum:'008618716005879',
+                predictValue:this.selectCount.toString(),
+                predictResult:val=='up'?1:-1,
+            }
+            this.axios.post(this.GLOBAL.baseUrl+'/predict/add',params)
+                .then((res)=>{
+                    let {state} = res.data
+                    if(state=='success'){
+                        this.showDialog=false
+                        this.getPersonInfo()
+                    }
+                })
+                .catch((err)=>console.log(err))
         },
         animationPlay:function () {
             let ele = this.$refs.dialogue.querySelectorAll('ul')
@@ -274,6 +364,13 @@ export default {
         console.log(balance)
     },
     mounted() {
+        this.getChatList()
+        this.getLatestIndex()
+        this.getPersonInfo()
+        this.getTableData()
+        this.$on('listenChatList',function () {
+            this.getChatList()
+        })
         /*this.intervalId = setInterval(() => {
             this.animationPlay()
         }, 2000)*/

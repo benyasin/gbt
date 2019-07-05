@@ -3,22 +3,24 @@
         <div class="gbt-dialog-header">
             <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
             <span class="title">发弹幕</span>
-            <button class="btn send-btn">发送</button>
+            <button @click="send" class="btn send-btn">发送</button>
         </div>
-        <x-textarea v-model="usrMessage" :max="20" placeholder="写下你的想法" @on-focus="onEvent('focus')" @on-blur="onEvent('blur')"></x-textarea>
+        <x-textarea v-model="usrMessage" :max="30" placeholder="写下你的想法" @on-focus="onEvent('focus')" @on-blur="onEvent('blur')"></x-textarea>
+        <toast v-model="showToast" type="text">{{errorMsg}}</toast>
     </div>
 </template>
-
 <script>
-    import {XTextarea} from 'vux'
+    import {XTextarea,Toast} from 'vux'
     export default {
         components:{
-            XTextarea,
+            XTextarea,Toast
         },
         name: "MessageBoard",
         data(){
             return{
+                showToast:false,
                 usrMessage:'',
+                errorMsg:'',
             }
         },
         methods:{
@@ -27,6 +29,24 @@
             },
             onEvent (event) {
                 console.log('on', event)
+            },
+            send() {
+                let params = {
+                    phoneNum:'008618716005879',
+                    content:this.usrMessage,
+                }
+                this.axios.post(this.GLOBAL.baseUrl+'/chat/add',params)
+                    .then((res)=>{
+                        let {state,message} = res.data
+                        if(state=='success'){
+                            this.goback()
+                            this.$emit('listenChatList')
+                        }else{
+                            this.errorMsg = message
+                            this.showToast=true
+                        }
+                    })
+                    .catch((err)=>console.log(err))
             },
         },
     }
@@ -53,6 +73,5 @@
                 @include setBtn(70px,30px,$cGreen,5px,$cWhite,12px);
             }
         }
-
     }
 </style>

@@ -2,8 +2,8 @@
     <div class="gbt-mine">
         <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
        <div class="gbt-mine-header">
-           <img src="../assets/img/sGoldEgg.png" width="69px" height="69px" alt="">
-           <span class="name">{{user.name}}</span>
+           <img :src="userInfo.avatar" width="69px" height="69px" alt="">
+           <span class="name">{{userInfo.username}}</span>
            <div class="price">
                <img src="../assets/img/sGoldEgg.png" width="23px" height="23px" alt="">
                <span class="count">X{{user.price}}</span>
@@ -12,10 +12,10 @@
        </div>
        <div class="gbt-mine-content">
            <div class="info">
-               <div><p class="rank">999+</p><p class="desc">活跃度排行</p></div>
-               <div><p class="rank">999+</p><p class="desc">胜率排行</p></div>
-               <div><p class="rank">100%</p><p class="desc">胜率</p></div>
-               <div><p class="rank">3次</p><p class="desc">预言战绩</p></div>
+               <div><p class="rank">{{userInfo.predictRank}}</p><p class="desc">活跃度排行</p></div>
+               <div><p class="rank">{{userInfo.winRank}}</p><p class="desc">胜率排行</p></div>
+               <div><p class="rank">{{userInfo.winRatio*100}}%</p><p class="desc">胜率</p></div>
+               <div><p class="rank">{{userInfo.predictTimes}}</p><p class="desc">预言战绩</p></div>
            </div>
            <div class="tab">
                <div class="btns" ref="tabbtns">
@@ -23,9 +23,10 @@
                    <button class="btn tab-btn" @click="handleTab($event,'我的奖励')">我的奖励</button>
                </div>
                <div class="list">
-                   <div class="list-block" v-for="(itm,index) in tableData[tabIndex]" :key="index" @click="toRouter(itm)">
+                   <div class="list-block" v-for="(itm,index) of tableData[tabIndex]" :key="index" @click="toRouter(itm)">
+                        {{tableData[itm]}}
                        <p class="item" v-if="tabIndex=='我的预言'">
-                        <span class="sp1">{{itm.count}}积分预言</span>
+                        <span class="sp1">{{itm.predictValue}}积分预言</span>
                         <span class="sp2">{{itm.date}}</span>
                        </p>
                        <p class="item-sub" v-if="tabIndex=='我的奖励'">
@@ -34,7 +35,7 @@
                        </p>
                        <p class="item item-sub" v-if="tabIndex=='我的预言'">
                         <span class="sp3" v-if="itm.status=='success'">{{itm.price}}积分</span>
-                        <span class="sp3">{{itm.status=='success'?'成功':'失败'}}</span>
+                        <span class="sp3"><span v-if="itm.isFinished">{{itm.actualResult==itm.predictResult?'成功':'失败'}}</span><span v-else>待公布</span></span>
                         <button class="btn"><img src="../assets/img/arrowR.png" width="7px" height="11px" alt=""></button>
                        </p>
                        <p class="item item-sub" v-if="tabIndex=='我的奖励'">
@@ -44,24 +45,29 @@
                </div>
            </div>
        </div>
+        <toast v-model="showToast" type="text">{{errorMsg}}</toast>
     </div>
 </template>
 
 <script>
+    import {Toast} from 'vux'
     import '../assets/scss/mine.scss'
+    import {mapGetters} from 'vuex'
     export default {
         components:{
+            Toast,
         },
         name: "mine",
         data(){
             return{
+                showToast:false,
+                errorMsg:'',
                 user:{
-                    avatar:'../assets/img/sGoldEgg.png',
-                    name:'三生三世',
                     price:33,
                 },
                 tabIndex:'我的预言',
-                tableData:{
+                tableData:{},
+                /*tableData:{
                     '我的预言':[{count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'up',result:'0',resultDeraction:'up'},
                         {count:'20',date:'2018-03-13',price:0,status:'failed',deraction:'up',result:'0',resultDeraction:'down'},
                         {count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'down',result:'1',resultDeraction:'down'},
@@ -72,11 +78,16 @@
                         {count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'up',result:'1',resultDeraction:'up'}],
                     '我的奖励':[{date:'2018-03-13',price:'100'},
                         {date:'2018-03-13',price:'30'},
-                        {date:'2018-03-13',price:'10'},]},
+                        {date:'2018-03-13',price:'10'},]},*/
             }
         },
         created(){
             this.tabIndex = this.$route.params.index==0?'我的预言':'我的奖励'
+        },
+        computed:{
+            ...mapGetters([
+                'userInfo',
+            ])
         },
         mounted(){
             if(this.$route.params&&this.$route.params.index==1){
@@ -85,8 +96,33 @@
             }else{
                 this.tabIndex='我的预言'
             }
+            this.getTableData()
         },
         methods:{
+            async getTableData () {
+                let map = new Map()
+                let predictlist = await this.getList('/predict/list')
+                let pricelist = await this.getList('')
+                map.set('我的预言',predictlist)
+                map.set('我的奖励',pricelist)
+                let obj = {}
+                for (let [key,value] of map) {
+                    obj[key] = value
+                }
+                this.tableData = obj
+                console.log(this.tableData)
+            },
+            getList(url){
+                const promise = new Promise((resolve,reject)=>{
+                    this.axios.get(this.GLOBAL.baseUrl + url)
+                        .then((res)=>{
+                            resolve(res.data.data);
+                        }).catch((err) => {
+                        reject(err);
+                    });
+                })
+                return promise
+            },
             goback(){
               this.$router.go(-1)
             },

@@ -2,8 +2,8 @@
     <div class="gbt-mine">
         <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
        <div class="gbt-mine-header">
-           <img src="../assets/img/sGoldEgg.png" width="69px" height="69px" alt="">
-           <span class="name">{{user.name}}</span>
+           <img :src="userInfo.avatar" width="69px" height="69px" alt="">
+           <span class="name">{{userInfo.username}}</span>
            <div class="price">
                <img src="../assets/img/sGoldEgg.png" width="23px" height="23px" alt="">
                <span class="count">X{{user.price}}</span>
@@ -12,10 +12,10 @@
        </div>
        <div class="gbt-mine-content">
            <div class="info">
-               <div><p class="rank">999+</p><p class="desc">活跃度排行</p></div>
-               <div><p class="rank">999+</p><p class="desc">胜率排行</p></div>
-               <div><p class="rank">100%</p><p class="desc">胜率</p></div>
-               <div><p class="rank">3次</p><p class="desc">预言战绩</p></div>
+               <div><p class="rank">{{userInfo.predictRank}}</p><p class="desc">活跃度排行</p></div>
+               <div><p class="rank">{{userInfo.winRank}}</p><p class="desc">胜率排行</p></div>
+               <div><p class="rank">{{userInfo.winRatio*100}}%</p><p class="desc">胜率</p></div>
+               <div><p class="rank">{{userInfo.predictTimes}}</p><p class="desc">预言战绩</p></div>
            </div>
            <div class="tab">
                <div class="btns" ref="tabbtns">
@@ -25,9 +25,9 @@
                <div class="list">
                    <div class="list-block" v-for="(itm,index) in tableData[tabIndex]" :key="index">
                        <span class="sp1-more">{{itm.rank}}</span>
-                       <img width="32px" height="32px" src="../assets/img/comment.png" alt="">
-                       <span class="sp2-more">{{itm.name}}</span>
-                       <span class="sp3-more">{{itm.decs}}<span class="sp4-more" v-if="tabIndex=='活跃度排行'">活跃度</span></span>
+                       <img width="32px" height="32px" :src="itm.avatar" alt="">
+                       <span class="sp2-more">{{itm.username}}</span>
+                       <span class="sp3-more"><span v-if="tabIndex=='活跃度排行'">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span class="sp4-more" v-if="tabIndex=='活跃度排行'">活跃度</span></span>
                    </div>
                </div>
            </div>
@@ -37,30 +37,26 @@
 
 <script>
     import '../assets/scss/mine.scss'
+    import {mapGetters} from 'vuex'
     export default {
         components:{
         },
+        computed:{
+            ...mapGetters([
+                'userInfo'
+            ])
+        },
         name: "more",
         data(){
-            return{
-                user:{
-                    avatar:'../assets/img/sGoldEgg.png',
-                    name:'三生三世',
-                    price:33,
+            return {
+                user: {
+                    avatar: '../assets/img/sGoldEgg.png',
+                    name: '三生三世',
+                    price: 33,
                 },
-                tabIndex:'活跃度排行',
-                tablist:['活跃度排行','胜率排行'],
-                tableData:{
-                    '活跃度排行':[{name:'小美人',avatar:'',rank:'1',decs:'3233'},
-                        {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                        {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                        {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                        {name:'小美人',avatar:'',rank:'1',decs:'3232'},
-                        {name:'小美人',avatar:'',rank:'1',decs:'3232'}],
-                    '胜率排行':[{name:'胜率',avatar:'',rank:'1',decs:'100%'},
-                        {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
-                        {name:'胜率daren',avatar:'',rank:'1',decs:'100%'},
-                        {name:'lallafdfs',avatar:'',rank:'1',decs:'100%'}]},
+                tabIndex: '活跃度排行',
+                tablist: ['活跃度排行', '胜率排行'],
+                tableData: {},
             }
         },
         created(){
@@ -73,8 +69,33 @@
             }else{
                 this.tabIndex = this.tablist[0]
             }
+            this.getTableData()
         },
         methods:{
+            async getTableData(){
+                let map = new Map()
+                let obj={}
+                let activelist = await this.getDataUrl('/rank/activeList')
+                let winlist = await this.getDataUrl('/rank/winList')
+                map.set('活跃度排行',activelist)
+                map.set('胜率排行',winlist)
+                for(let [key,value] of map){
+                    obj[key] = value
+                }
+                this.tableData = obj
+            },
+            getDataUrl(url){
+                const promise = new Promise((resolve,reject)=>{
+                    this.axios.get(this.GLOBAL.baseUrl + url)
+                        .then((res)=>{
+                            let {state,data} = res.data
+                            state=='success'?resolve(data):resolve([])
+                        }).catch((err)=>{
+                        reject(err)
+                    })
+                })
+                return promise
+            },
             goback(){
               this.$router.go(-1)
             },
