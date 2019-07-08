@@ -9,6 +9,12 @@ const app = {
             winTimes: 0,
             isFinished: false,
         },
+        chainInfo:{
+            chainId:'',
+            userId:'',
+            phoneNum:'',
+            accountName:''
+        },
     },
     mutations: {
         SET_DIRECTION: (state, direction) => {
@@ -16,6 +22,9 @@ const app = {
         },
         SET_USERINFO:(state,obj)=>{
             state.userInfo = obj
+        },
+        SET_CHAININFO:(state,obj)=>{
+            state.chainInfo = obj
         }
     },
 }

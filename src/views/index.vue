@@ -90,16 +90,16 @@
                </button-tab>
                <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span v-else>太棒了！继续加油哦</span></div>
                <swiper v-model="tabIndex" height="355px" :show-dots="false">
-                   <swiper-item style="min-height: 355px" v-for="(item, index) in tablist" :key="index">
+                   <swiper-item v-for="(item, index) in tablist" :key="index">
                        <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
-                           <span class="sp1">{{itm.rank}}</span>
+                           <span class="sp1">{{index+1}}</span>
                            <img width="32px" height="32px" :src="itm.avatar" alt="">
                            <span class="sp2">{{itm.username}}</span>
                            <span class="sp3"><span v-if="tabIndex==0">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span class="sp4" v-if="tabIndex==0">活跃度</span></span>
                        </div>
                    </swiper-item>
                </swiper>
-               <button class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
+               <button v-if="tableData[tablist[tabIndex]]&&tableData[tablist[tabIndex]].length>=6" class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
            </div>
        </div>
         <div v-transfer-dom>
@@ -111,12 +111,13 @@
                     <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{nextDate}}大盘指数涨跌</p>
                     <p style="display: flex;justify-content: space-between;margin:30px 0 15px;"><span style="color: #78BAEC">每次预言扣除2积分手续费</span><span style="color: #fff">我的积分:22222222</span></p>
                     <div style="display: flex;justify-content: space-between">
-                        <button :style="[{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'},{color:selectCount.indexOf(item)>-1?'#001436':'#fff'}]" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold" v-for="item in countlist">{{item}}</button>
+                        <button :style="[{backgroundColor:selectCount.indexOf(item)>-1?'#FFD600':'#0A2A5B'},{color:selectCount.indexOf(item)>-1?'#001436':'#fff'}]" @click="handleSelectCount(item)" style="width: 54px;height:34px;border:0;background-color: #0A2A5B;border-radius: 3px;color:#fff;font-size: 21px;font-weight: bold;display: flex;justify-content: center" v-for="item in countlist">{{item}}</button>
                     </div>
-                    <button @click="sureGuess('up')" v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureRedbtn.png" alt=""></button>
-                    <button @click="sureGuess('down')" v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;"><img width="100%" src="../assets/img/sureGreenbtn.png" alt=""></button>
+                    <button @click="sureGuess('up')" v-if="statusUpDown=='up'" style="margin-top: 33px;padding:0;width: 100%;height: 65px;background: none;border:0;"><img width="100%" height="65px" src="../assets/img/sureRedbtn.png" alt=""></button>
+                    <button @click="sureGuess('down')" v-if="statusUpDown!=='up'" style="margin-top: 33px;padding:0;width: 100%;height: 65px;background: none;border:0;"><img width="100%" height="65px" src="../assets/img/sureGreenbtn.png" alt=""></button>
                 </div>
             </x-dialog>
+            <toast v-model="showToast" type="text">{{errorMsg}}</toast>
         </div>
         <div v-transfer-dom>
             <x-dialog v-model="showDialogGlodEgg" hide-on-blur :dialog-style="{'max-width': '100%',width:'289px', height: '320px',backgroundColor:'transparent'}">
@@ -185,31 +186,22 @@ export default {
     computed:{
         ...mapGetters([
             'userInfo',
+            'chainInfo'
         ]),
         date(){
             let now = new Date()
             let m = now.getMonth() + 1
-            let d = now.getDay()
+            let d = now.getDate()
             return m + '月' + d + '日'
         },
         nextDate(){
             let now = new Date()
             let m = now.getMonth() + 1
-            let d = now.getDay()+1
+            let d = now.getDate()+1
             return m + '月' + d + '日'
         }
     },
     methods:{
-        getPrizepoll(){
-            this.axios.get(this.GLOBAL.baseUrl+'/chat')
-                .then((res)=>{
-                    let {code,data} = res
-                    if(code==200){
-
-                    }
-                })
-                .catch(err=>console.log(err))
-        },
         async getPersonInfo(){
             let perdictInfo = await this.getPersonUrl('/predict/personal')
             let rankInfo = await this.getPersonUrl('/rank/personal')
@@ -237,8 +229,7 @@ export default {
         },
         getPersonUrl(url){
             const promise = new Promise((resolve,reject)=>{
-                let userId = 'rku2pvlH7'
-              this.axios.get(this.GLOBAL.baseUrl+url+`?userId=${userId}`)
+              this.axios.get(this.GLOBAL.baseUrl+url+`?userId=${chainInfo.userId}`)
                   .then((res)=>{
                       let {state,data}=res.data
                       state=='success'?resolve(data):resolve(null)
@@ -335,26 +326,62 @@ export default {
         },
         // 提交预言
         sureGuess(val){
-            let params = {
-                phoneNum:'008618716005879',
-                predictValue:this.selectCount.toString(),
-                predictResult:val=='up'?1:-1,
-            }
-            this.axios.post(this.GLOBAL.baseUrl+'/predict/add',params)
-                .then((res)=>{
-                    let {state} = res.data
-                    if(state=='success'){
-                        this.showDialog=false
-                        this.getPersonInfo()
+            if(this.selectCount.length){
+                let postULdata = {
+                    "chainId": this.chainInfo.chainId,                 //[必填],链ID,从url的参数中获取后回填至此
+                    "contract": "ultrainpoint",             //[必填],如果转账UGAS,则值为"utrio.token"，否则值为具体的发币合约的owner账号
+                    "action": "transfer",                   //[必填],转账业务，值为固定的值"transfer"
+                    "type": "transfer",                     //[必填],转账业务的固定值为"transfer"
+                    "bizId": "86534135672411",              //[必填],业务id,用来保证同一业务不会重复转账
+                    "data": {
+                        "receiver": "guessbtc",           //[必填],收款账号，一般为商家的账号
+                        "quantity": this.selectCount.toString()+'UPOINT',           //[必填],数量及单位，如果是UGAS,则比如"100.0000 UGAS"
+                        "memo": "test"                        //[必填],值可以空
+                    }
+                }
+                window.postMessage(postULdata,(res)=>{
+                    let {success,msg} = res
+                    if(success){
+                        let params = {
+                            phoneNum:'008618716005879',
+                            predictValue:this.selectCount.toString(),
+                            predictResult:val=='up'?1:-1,
+                        }
+                        this.axios.post(this.GLOBAL.baseUrl+'/predict/add',params)
+                            .then((res)=>{
+                                let {state,message} = res.data
+                                if(state=='success'){
+                                    this.showDialog=false
+                                    this.getPersonInfo()
+                                }else{
+                                    this.errorMsg = message
+                                    this.showToast=true
+                                }
+                            })
+                            .catch((err)=>console.log(err))
+                    }else{
+                        this.errorMsg = msg
+                        this.showToast=true
                     }
                 })
-                .catch((err)=>console.log(err))
+            }else{
+                this.errorMsg = '请选择预言积分'
+                this.showToast=true
+            }
+
         },
         animationPlay:function () {
             let ele = this.$refs.dialogue.querySelectorAll('ul')
         },
     },
     async created(){
+        let obj = {
+            chainId:this.$route.query.chainId,
+            userId:this.$route.query.userId,
+            phoneNum:this.$route.query.phoneNum,
+            accountName:this.$route.query.accountName,
+        }
+        store.commit('SET_CHAININFO',obj)
         const u3 = createU3(config);
         const balance = await u3.getCurrencyBalance({
           code: config.pointAccount,

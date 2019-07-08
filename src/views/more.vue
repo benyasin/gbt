@@ -24,10 +24,12 @@
                </div>
                <div class="list">
                    <div class="list-block" v-for="(itm,index) in tableData[tabIndex]" :key="index">
-                       <span class="sp1-more">{{itm.rank}}</span>
-                       <img width="32px" height="32px" :src="itm.avatar" alt="">
-                       <span class="sp2-more">{{itm.username}}</span>
-                       <span class="sp3-more"><span v-if="tabIndex=='活跃度排行'">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span class="sp4-more" v-if="tabIndex=='活跃度排行'">活跃度</span></span>
+                       <div class="block-item">
+                           <span class="sp1-more">{{index+1}}</span>
+                           <img width="32px" height="32px" :src="itm.avatar" alt="">
+                           <span class="sp2-more">{{itm.username}}</span>
+                           <span class="sp3-more"><span v-if="tabIndex=='活跃度排行'">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span class="sp4-more" v-if="tabIndex=='活跃度排行'">活跃度</span></span>
+                       </div>
                    </div>
                </div>
            </div>

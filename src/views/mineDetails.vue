@@ -25,7 +25,7 @@
             </div>
             <div class="result-block">
                 <p class="item">
-                    <span class="title">预言记录</span>
+                    <span class="title">预言结果</span>
                     <span v-if="!itmData.isFinished" class="title">待公布</span>
                     <span v-else class="title">{{itmData.predictResult==itmData.actualResult?'预言成功':'预言失败'}}</span>
                 </p>

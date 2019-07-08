@@ -23,24 +23,27 @@
                    <button class="btn tab-btn" @click="handleTab($event,'我的奖励')">我的奖励</button>
                </div>
                <div class="list">
-                   <div class="list-block" v-for="(itm,index) of tableData[tabIndex]" :key="index" @click="toRouter(itm)">
-                        {{tableData[itm]}}
-                       <p class="item" v-if="tabIndex=='我的预言'">
-                        <span class="sp1">{{itm.predictValue}}积分预言</span>
-                        <span class="sp2">{{itm.date}}</span>
-                       </p>
-                       <p class="item-sub" v-if="tabIndex=='我的奖励'">
-                           <span class="sp1">金蛋来访</span>
-                           <span class="sp2">{{itm.date}}</span>
-                       </p>
-                       <p class="item item-sub" v-if="tabIndex=='我的预言'">
-                        <span class="sp3" v-if="itm.status=='success'">{{itm.price}}积分</span>
-                        <span class="sp3"><span v-if="itm.isFinished">{{itm.actualResult==itm.predictResult?'成功':'失败'}}</span><span v-else>待公布</span></span>
-                        <button class="btn"><img src="../assets/img/arrowR.png" width="7px" height="11px" alt=""></button>
-                       </p>
-                       <p class="item item-sub" v-if="tabIndex=='我的奖励'">
-                           <span class="sp3">领取{{itm.price}}积分</span>
-                       </p>
+                   <div class="list-block" v-for="(itm,index) of tableData[tabIndex]" :key="index">
+                       <div class="block-item" v-if="tabIndex=='我的预言'" @click="toRouter(itm)">
+                           <p class="item">
+                               <span class="sp1">{{itm.predictValue}}积分预言</span>
+                               <span class="sp2">{{itm.date}}</span>
+                           </p>
+                           <p class="item item-sub">
+                               <span class="sp3" v-if="itm.status=='success'">{{itm.price}}积分</span>
+                               <span class="sp3"><span v-if="itm.isFinished">{{itm.isWin?'成功':'失败'}}</span><span v-else>待公布</span></span>
+                               <button class="btn"><img src="../assets/img/arrowR.png" width="7px" height="11px" alt=""></button>
+                           </p>
+                       </div>
+                       <div class="block-item" v-else-if="tabIndex=='我的奖励'">
+                           <p class="item-sub">
+                               <span class="sp1">金蛋来访</span>
+                               <span class="sp2">{{itm.date}}</span>
+                           </p>
+                           <p class="item item-sub">
+                               <span class="sp3">领取{{itm.result}}积分</span>
+                           </p>
+                       </div>
                    </div>
                </div>
            </div>
@@ -67,18 +70,6 @@
                 },
                 tabIndex:'我的预言',
                 tableData:{},
-                /*tableData:{
-                    '我的预言':[{count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'up',result:'0',resultDeraction:'up'},
-                        {count:'20',date:'2018-03-13',price:0,status:'failed',deraction:'up',result:'0',resultDeraction:'down'},
-                        {count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'down',result:'1',resultDeraction:'down'},
-                        {count:'20',date:'2018-03-13',price:0,status:'failed',deraction:'down',result:'2',resultDeraction:'up'},
-                        {count:'20',date:'2018-03-13',price:'+100',status:'success',deraction:'down',result:'0',resultDeraction:'down'},
-                        {count:'20',date:'2018-03-13',price:'0',status:'failed',deraction:'up',result:'2',resultDeraction:'down'},
-                        {count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'up',result:'1',resultDeraction:'up'},
-                        {count:'20',date:'2018-03-13',price:'+30',status:'success',deraction:'up',result:'1',resultDeraction:'up'}],
-                    '我的奖励':[{date:'2018-03-13',price:'100'},
-                        {date:'2018-03-13',price:'30'},
-                        {date:'2018-03-13',price:'10'},]},*/
             }
         },
         created(){
@@ -87,6 +78,7 @@
         computed:{
             ...mapGetters([
                 'userInfo',
+                'chainInfo'
             ])
         },
         mounted(){
@@ -102,15 +94,15 @@
             async getTableData () {
                 let map = new Map()
                 let predictlist = await this.getList('/predict/list')
-                let pricelist = await this.getList('')
+                let pricelist = await this.getList(`/award/personal?userId=${chainInfo.userId}`)
                 map.set('我的预言',predictlist)
                 map.set('我的奖励',pricelist)
+                console.log(pricelist)
                 let obj = {}
                 for (let [key,value] of map) {
                     obj[key] = value
                 }
                 this.tableData = obj
-                console.log(this.tableData)
             },
             getList(url){
                 const promise = new Promise((resolve,reject)=>{
