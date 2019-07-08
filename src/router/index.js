@@ -20,6 +20,8 @@ Router.prototype.goBack = function (val) {
 }
 
 const router =  new Router({
+  mode: 'history',
+  hash: false,
   routes: [
     {
       path: '/',

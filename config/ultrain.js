@@ -12,10 +12,11 @@ const ultrain = {
     file: false, // append to file
   },
   symbol: 'UPOINT',
-  keyProvider: ['5JUCwpp6h3W58Uvvc7qDrmMbQnDimiCQSHZmF3KfgFf6cpVkNbz'],
   pointAccount: 'ultrainpoint',
   poolAccount: 'guessbtc',
   gainAccount: 'guessbtcgain',
+
+
   //expireInSeconds:60
 };
 module.exports = ultrain;
