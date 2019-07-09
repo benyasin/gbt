@@ -274,7 +274,7 @@
       },
       getPersonUrl(url) {
         const promise = new Promise((resolve, reject) => {
-          this.axios.get(this.GLOBAL.baseUrl + url + `?userId=${chainInfo.userId}`)
+          this.axios.get(this.GLOBAL.baseUrl + url + `?userId=${this.chainInfo.userId}`)
             .then((res) => {
               let { state, data } = res.data;
               state == 'success' ? resolve(data) : resolve(null);
