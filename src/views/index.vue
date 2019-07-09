@@ -106,7 +106,7 @@
                 </button-tab>
                 <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span
                         v-else>太棒了！继续加油哦</span></div>
-                <swiper v-model="tabIndex" height="355px" :show-dots="false">
+                <swiper v-model="tabIndex" height="390px" :show-dots="false">
                     <swiper-item v-for="(item, index) in tablist" :key="index">
                         <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
                             <span class="sp1">{{index+1}}</span>
@@ -142,10 +142,10 @@
                                 v-for="item in countlist">{{item}}
                         </button>
                     </div>
-                    <button @click.once="sureGuess('up')" v-if="statusUpDown=='up'"
+                    <button @click="sureGuess" v-if="statusUpDown=='up'"
                             style="margin-top: 33px;padding:0;width: 100%;height: 65px;border:0;background:none"><img
                             width="100%" height="65px" src="../assets/img/sureRedbtn.png" alt=""></button>
-                    <button @click.once="sureGuess('down')" v-if="statusUpDown!=='up'"
+                    <button @click="sureGuess" v-if="statusUpDown!=='up'"
                             style="margin-top: 33px;padding:0;width: 100%;height: 65px;background: none;border:0;"><img
                             width="100%" height="65px" src="../assets/img/sureGreenbtn.png" alt=""></button>
                 </div>
@@ -358,11 +358,11 @@
                 let now = new Date()
                 let h = now.getHours()
                 let m = now.getMinutes()
-                /*if((h >= 22) || (h==0&&m<30)){
+                if((h >= 22) || (h==0&&m<30)){
                     this.errorMsg = '预言时间来哦!';
                     this.showToast = true;
                     return
-                }*/
+                }
                 this.selectCount = [];
                 this.showDialog = true;
                 this.statusUpDown = val;
@@ -420,8 +420,7 @@
                 }
             },
             // 提交预言
-            sureGuess(val) {
-                this.statusUpDown = val
+            sureGuess() {
                 if (this.selectCount.length) {
                     this.callWallet('first')
                 } else {
@@ -449,8 +448,8 @@
         mounted() {
             this.getChatList();
             this.getLatestIndex();
-            this.getPersonInfo();
             this.getTableData();
+            this.getPersonInfo();
             this.$on('listenChatList', function () {
                 this.getChatList();
             });
