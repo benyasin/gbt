@@ -52,17 +52,17 @@
 <script>
     export default {
         name: "mineDetails",
-        data(){
-            return{
-                itmData:{}
+        data() {
+            return {
+                itmData: {}
             }
         },
         created() {
-            this.itmData=this.$route.params
+            this.itmData = this.$route.params
 
         },
-        methods:{
-            goback(){
+        methods: {
+            goback() {
                 this.$router.go(-1)
             },
         },
@@ -71,37 +71,44 @@
 
 <style scoped lang="scss">
     @import "../assets/scss/theme";
-    .mine-details{
+
+    .mine-details {
         width: 100%;
         height: 100%;
-        background-color:$cBg ;
+        background-color: $cBg;
         position: relative;
-        .mine-details-content{
+
+        .mine-details-content {
             position: absolute;
-            top:50px;
-            left:0;
+            top: 50px;
+            left: 0;
             bottom: 0;
             right: 0;
             border-top-right-radius: 22px;
             border-top-left-radius: 22px;
             background-color: #F5F5F5;
-            padding:22px 15px 0;
+            padding: 22px 15px 0;
             box-sizing: border-box;
-            .redColor{
-                color:$cRed;
+
+            .redColor {
+                color: $cRed;
             }
-            .greenColor{
-                color:$cGreen;
+
+            .greenColor {
+                color: $cGreen;
             }
-            .title{
+
+            .title {
                 font-size: 13px;
-                color:#000;
+                color: #000;
             }
-            .prophecy-block{
+
+            .prophecy-block {
                 @extend .block;
                 height: 181px;
             }
-            .result-block{
+
+            .result-block {
                 @extend .block;
                 min-height: 103px;
                 margin-top: 15px;
