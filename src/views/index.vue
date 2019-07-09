@@ -223,7 +223,7 @@
                 tabIndex: 0,
                 tablist: ['活跃度排行', '胜率排行'],
                 tableData: {},
-                poolCount: [1, 2, 3, 4, 2, 3],
+                poolCount: [],
                 countlist: [20, 100, 200, 500],
                 dialogueList: [],
                 selectCount: [],
@@ -444,7 +444,7 @@
                 account: config.poolAccount,
                 symbol: config.symbol,
             });
-            console.log(balance);
+            this.poolCount = balance[0].split(' ')[0].toString().split('')
         },
         mounted() {
             this.getChatList();
