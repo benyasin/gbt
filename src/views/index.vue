@@ -406,6 +406,7 @@
                     'type': 'transfer',                     //[必填],转账业务的固定值为"transfer"
                     'bizId': new Date().getMilliseconds(),              //[必填],业务id,用来保证同一业务不会重复转账
                     'data': {
+                        'payer': this.chainInfo.accountName,
                         'receiver': config.poolAccount,           //[必填],收款账号，一般为商家的账号
                         'quantity': this.selectCount[0] + ' UPOINT',           //[必填],数量及单位，如果是UGAS,则比如"100.0000 UGAS"
                         'memo': 'predict',                        //[必填],值可以空
