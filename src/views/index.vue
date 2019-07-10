@@ -410,7 +410,7 @@
               'receiver': config.poolAccount,           //[必填],收款账号，一般为商家的账号
               'quantity': (parseInt(this.selectCount[0]) - 2) + ' UPOINT',           //[必填],数量及单位，如果是UGAS,则比如"100.0000 UGAS"
               'memo': 'predict to pool',                        //[必填],值可以空
-            }
+            },
           };
 
           let postData2 = {
@@ -418,7 +418,7 @@
             'contract': config.pointAccount,             //[必填],如果转账UGAS,则值为"utrio.token"，否则值为具体的发币合约的owner账号
             'action': 'transfer',                   //[必填],转账业务，值为固定的值"transfer"
             'type': 'transfer',                     //[必填],转账业务的固定值为"transfer"
-            'bizId': new Date().getMilliseconds(),              //[必填],业务id,用来保证同一业务不会重复转账
+            'bizId': new Date().getMilliseconds() + 1,              //[必填],业务id,用来保证同一业务不会重复转账
             'data': {
               'payer': this.chainInfo.accountName,
               'receiver': config.gainAccount,           //[必填],收款账号，一般为商家的账号
