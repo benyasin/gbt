@@ -320,7 +320,7 @@
             },
             getDataUrl(url) {
                 const promise = new Promise((resolve, reject) => {
-                    this.axios.get(this.GLOBAL.baseUrl + url)
+                    this.axios.get(this.GLOBAL.baseUrl + url + '?currentPage=1&pageSize=6')
                         .then((res) => {
                             let {state, data} = res.data;
                             state == 'success' ? resolve(data) : resolve([]);
