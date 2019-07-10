@@ -233,7 +233,6 @@
                     price: '',
                     ratio: '',
                 },
-                callWalletTime: '',
             };
         },
         created() {
@@ -397,33 +396,28 @@
                     this.selectCount = arr;
                 }
             },
-            // call wallet
-            callWallet(val) {
-                let postData = {
-                    'chainId': this.chainInfo.chainId,                 //[必填],链ID,从url的参数中获取后回填至此
-                    'contract': config.pointAccount,             //[必填],如果转账UGAS,则值为"utrio.token"，否则值为具体的发币合约的owner账号
-                    'action': 'transfer',                   //[必填],转账业务，值为固定的值"transfer"
-                    'type': 'transfer',                     //[必填],转账业务的固定值为"transfer"
-                    'bizId': new Date().getMilliseconds(),              //[必填],业务id,用来保证同一业务不会重复转账
-                    'data': {
-                        'payer': this.chainInfo.accountName,
-                        'receiver': config.poolAccount,           //[必填],收款账号，一般为商家的账号
-                        'quantity': this.selectCount[0] + ' UPOINT',           //[必填],数量及单位，如果是UGAS,则比如"100.0000 UGAS"
-                        'memo': 'predict',                        //[必填],值可以空
-                    },
-                };
-                if (window.postMessage) {
-                    console.log('sending data to webview...', JSON.stringify(postData));
-                    window.postMessage(JSON.stringify(postData));
-                    this.callWalletTime = val
-                } else {
-                    throw Error('postMessage接口还未注入');
-                }
-            },
             // 提交预言
             sureGuess() {
                 if (this.selectCount.length) {
-                    this.callWallet('first')
+                    let postData = {
+                        'chainId': this.chainInfo.chainId,                 //[必填],链ID,从url的参数中获取后回填至此
+                        'contract': config.pointAccount,             //[必填],如果转账UGAS,则值为"utrio.token"，否则值为具体的发币合约的owner账号
+                        'action': 'transfer',                   //[必填],转账业务，值为固定的值"transfer"
+                        'type': 'transfer',                     //[必填],转账业务的固定值为"transfer"
+                        'bizId': new Date().getMilliseconds(),              //[必填],业务id,用来保证同一业务不会重复转账
+                        'data': {
+                            'payer': this.chainInfo.accountName,
+                            'receiver': config.poolAccount,           //[必填],收款账号，一般为商家的账号
+                            'quantity': this.selectCount[0] + ' UPOINT',           //[必填],数量及单位，如果是UGAS,则比如"100.0000 UGAS"
+                            'memo': 'predict',                        //[必填],值可以空
+                        },
+                    };
+                    if (window.postMessage) {
+                        console.log('sending data to webview...', JSON.stringify(postData));
+                        window.postMessage(JSON.stringify(postData));
+                    } else {
+                        throw Error('postMessage接口还未注入');
+                    }
                 } else {
                     this.errorMsg = '请选择预言积分';
                     this.showToast = true;
@@ -464,7 +458,7 @@
                 if (success) {
                     let params = {
                         phoneNum: this.chainInfo.phoneNum,
-                        predictValue: this.callWalletTime == 'first' ? 2 : this.selectCount[0] - 2,
+                        predictValue: this.selectCount[0],
                         predictResult: this.statusUpDown == 'up' ? 1 : -1,
                     };
                     this.axios.post(this.GLOBAL.baseUrl + '/predict/add', params)
@@ -473,7 +467,6 @@
                             if (state == 'success') {
                                 this.showDialog = false;
                                 this.getPersonInfo();
-                                this.callWallet('second')
                             } else {
                                 this.errorMsg = message;
                                 this.showToast = true;
