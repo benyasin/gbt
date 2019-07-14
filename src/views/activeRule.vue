@@ -1,7 +1,7 @@
 <template>
     <div class="active-rule">
         <div class="header-router">
-            <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
+            <button @click="goback" class="btn goback">返回上一层</button>
             <span class="title">关于活动</span>
         </div>
         <div class="active-rule-contet">
@@ -47,7 +47,6 @@
         position: relative;
         background-color: $cBg;
         overflow: hidden;
-
         .active-rule-contet {
             position: absolute;
             top: 50px;

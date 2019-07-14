@@ -1,8 +1,8 @@
 <template>
     <div class="gbt-mine">
-        <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
+        <button @click="goback" class="btn goback-btn">返回上一层</button>
         <div class="gbt-mine-header">
-            <img :src="userInfo.avatar" width="69px" height="69px" alt="">
+            <img :src="userInfo.avatar" width="69px" height="69px" style="border-radius: 69px" alt="">
             <span class="name">{{userInfo.username}}</span>
             <div class="price">
                 <img src="../assets/img/sGoldEgg.png" width="23px" height="23px" alt="">

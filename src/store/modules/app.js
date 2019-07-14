@@ -8,6 +8,7 @@ const app = {
             winRatio: 0,
             winTimes: 0,
             isFinished: false,
+            isWin:false,
         },
         chainInfo:{
             chainId:'',

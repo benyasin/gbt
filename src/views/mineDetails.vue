@@ -1,7 +1,7 @@
 <template>
     <div class="mine-details">
         <div class="header-router">
-            <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
+            <button @click="goback" class="btn goback">返回上一层</button>
             <span class="title">记录详情</span>
         </div>
         <div class="mine-details-content">

@@ -1,7 +1,7 @@
 <template>
     <div class="gbt-dialog">
         <div class="gbt-dialog-header">
-            <x-icon class="icon" @click="goback" type="ios-arrow-thin-left" size="30"></x-icon>
+            <button @click="goback" class="btn" style="color:#000;">返回上一层</button>
             <span class="title">发弹幕</span>
             <button @click="send" class="btn send-btn">发送</button>
         </div>
