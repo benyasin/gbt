@@ -9,6 +9,7 @@ const app = {
             winTimes: 0,
             isFinished: false,
             isWin:false,
+            awardResult:0,
         },
         chainInfo:{
             chainId:'',

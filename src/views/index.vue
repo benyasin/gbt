@@ -158,7 +158,7 @@
                 <div class="dialog-wrap"
                      style="width: 100%;height: 100%;padding:15px 19px 0 19px;text-align: center;font-size: 12px;">
                     <div style="text-align: right;margin-right: -4px">
-                        <x-icon @click="showResultDialog = false" type="ios-close-empty" size="24"
+                        <x-icon @click="closeResultDialog" type="ios-close-empty" size="24"
                                 style="fill:#7A8496;"></x-icon>
                     </div>
                     <p style="font-size: 18px;font-weight: 700;color:#FFD600;display: flex"><span
@@ -183,8 +183,8 @@
                     </div>
                     <div
                             style="width: 100%;height: 270px;position:absolute;top:50px;left:0;border-radius: 22px;background-color: #001436;padding:0 29px;">
-                        <p style="font-size: 18px;color: #FFD600;margin-top: 120px">获得100积分</p>
-                        <button @click="this.showDialogGlodEgg = false"
+                        <p style="font-size: 18px;color: #FFD600;margin-top: 120px">获得{{userInfo.awardResult}}积分</p>
+                        <button @click="changeAwardRead"
                                 style="background: none;border:0;padding:0;margin-top:32px;"><img width="100%"
                                                                                                   src="../assets/img/sure.png"
                                                                                                   alt="">
@@ -290,6 +290,7 @@
             },
         },
         methods: {
+            // 获取userinfo
             async getPersonInfo() {
                 let perdictInfo = await this.getPersonUrl('/predict/personalLatest');
                 let rankInfo = await this.getPersonUrl('/rank/personal');
@@ -323,6 +324,7 @@
                     store.commit('SET_USERINFO', obj);
                 }
             },
+            // 获取balance
             async getBanlance() {
                 const u3 = createU3(config);
                 const balance = await u3.getCurrencyBalance({
@@ -350,6 +352,7 @@
                 });
                 return promise;
             },
+            // 活跃度 胜率
             async getTableData() {
                 let map = new Map();
                 let obj = {};
@@ -374,6 +377,7 @@
                 });
                 return promise;
             },
+            // 聊天
             getChatList() {
                 this.axios.get(this.GLOBAL.baseUrl + '/chat/list')
                     .then((res) => {
@@ -384,6 +388,7 @@
                     })
                     .catch((err) => console.log(err));
             },
+            // 最新预测信息
             getLatestIndex() {
                 this.axios.get(this.GLOBAL.baseUrl + '/predict/latestIndex')
                     .then((res) => {
@@ -400,6 +405,35 @@
                         }
                     })
                     .catch((err) => console.log(err));
+            },
+            // 关闭result弹窗
+            async closeResultDialog(){
+                this.showResultDialog = false
+                let award = await this.getPersonUrl('/award/personalLatest')
+                if(award != null){
+                    let {date,id,result} = award
+                    let obj = {
+                        awardDate:date,
+                        awardId:id,
+                        awardResult:result
+                    }
+                    store.commit('SET_USERINFO', obj);
+                    let {hasRead} = award
+                    hasRead===false?this.showDialogGlodEgg=true:this.showDialogGlodEgg=false
+                }
+            },
+            // 关闭奖励弹窗
+            changeAwardRead(){
+                let params = {
+                    id:this.userInfo.awardId
+                }
+                this.axios.post(this.GLOBAL.baseUrl +'/award/update',params)
+                    .then((res)=>{
+                        let {state} = res.data;
+                        if(state == 'success'){
+                            this.showDialogGlodEgg=false
+                        }
+                    }).catch(err=>console.log(err))
             },
             lookUpDown(val) {
                 let now = new Date()
