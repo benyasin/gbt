@@ -335,9 +335,9 @@
         const userbalance = await u3.getCurrencyBalance({
           code: config.pointAccount,
           symbol: config.symbol,
-          account: 'cona2',
+          account: this.chainInfo.accountName,
         });
-        this.poolCount = balance[0].split(' ')[0].toString().split('');
+        this.poolCount = balance[0].split(' ')[0].split('');
         this.userBanlance = userbalance[0].split(' ')[0];
       },
       getPersonUrl(url) {
@@ -544,9 +544,9 @@
       const userbalance = await u3.getCurrencyBalance({
         code: config.pointAccount,
         symbol: config.symbol,
-        account: 'cona2',
+        account: this.chainInfo.accountName,
       });
-      this.poolCount = balance[0].split(' ')[0].toString().split('');
+      this.poolCount = balance[0].split(' ')[0].split('');
       this.userBanlance = userbalance[0].split(' ')[0];
     },
     mounted() {
