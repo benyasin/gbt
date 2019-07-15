@@ -256,10 +256,6 @@
                 userBanlance: 0,
             };
         },
-        created() {
-            this.getPersonInfo();
-        },
-
         computed: {
             ...mapGetters([
                 'userInfo',
@@ -423,7 +419,8 @@
             },
             // 关闭奖励弹窗
             changeAwardRead(id){
-                this.axios.post(this.GLOBAL.baseUrl +'/award/update',{id:id})
+                let params = {id:id}
+                this.axios.post(this.GLOBAL.baseUrl +'/award/update',JSON.stringify(params))
                     .then((res)=>{
                         let {state} = res.data;
                         if(state == 'success'){
