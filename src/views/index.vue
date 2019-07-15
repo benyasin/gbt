@@ -64,7 +64,7 @@
                             <img width="100%" height="100%" src="../assets/img/greenbar.png" alt="">
                         </div>
                     </div>
-                    <div class="guess-btn" v-show="!status">
+                    <div class="guess-btn" v-if="!status">
                         <button @click="lookUpDown('up')" class="btn guess-sub-btn"><img width="100%"
                                                                                          src="../assets/img/redbtn.png"
                                                                                          alt=""></button>
@@ -72,11 +72,11 @@
                                                                              src="../assets/img/greenbtn.png" alt="">
                         </button>
                     </div>
-                    <div class="guessed-text" v-show="status">
+                    <div class="guessed-text" v-if="status">
                         <p>您已预言<span v-if="userInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else
                                                                                                          style="color:#36884A">跌</span>
                         </p>
-                        <p class="p1">预计下一个交易日15:15结果揭晓</p>
+                        <p class="p1">预计下一个交易日00:30结果揭晓</p>
                     </div>
                 </div>
                 <div>每个交易日涨跌仅可预言一次,每次可投20-500ultrain积分</div>
@@ -153,12 +153,12 @@
             <toast v-model="showToast" type="text">{{errorMsg}}</toast>
         </div>
         <div v-transfer-dom>
-            <x-dialog v-model="showResultDialog" hide-on-blur
+            <x-dialog @on-hide="changeResultRead(userInfo._id)" v-model="showResultDialog" hide-on-blur
                       :dialog-style="{'max-width': '100%',width:'289px', height: '282px', 'background-color': '#001436','border-radius':'22px'}">
                 <div class="dialog-wrap"
                      style="width: 100%;height: 100%;padding:15px 19px 0 19px;text-align: center;font-size: 12px;">
                     <div style="text-align: right;margin-right: -4px">
-                        <x-icon @click="showResultDialog = false" type="ios-close-empty" size="24"
+                        <x-icon @click="changeResultRead(userInfo._id)" type="ios-close-empty" size="24"
                                 style="fill:#7A8496;"></x-icon>
                     </div>
                     <p style="font-size: 18px;font-weight: 700;color:#FFD600;display: flex"><span
@@ -172,7 +172,7 @@
             <toast v-model="showToast" type="text">{{errorMsg}}</toast>
         </div>
         <div v-transfer-dom>
-            <x-dialog v-model="showDialogGlodEgg" hide-on-blur
+            <x-dialog @on-hide="changeAwardRead(awardInfo.awardId)" v-model="showDialogGlodEgg" hide-on-blur
                       :dialog-style="{'max-width': '100%',width:'289px', height: '320px',backgroundColor:'transparent'}">
                 <div style="width:100%;height:100%;">
                     <div style="width:100%;height159px;position: absolute;top:0;left:0;z-index: 1">
@@ -294,7 +294,7 @@
                 if (perdictInfo == null) {
                     this.status = false;
                 } else {
-                    if (perdictInfo && perdictInfo[0].isFinished) {
+                    if (perdictInfo && !perdictInfo[0].hasRead) {
                         this.status = false;
                         this.showResultDialog = true;
                     } else {
@@ -420,6 +420,17 @@
                     store.commit('SET_AWARDINFO', obj);
                     hasRead===false?this.showDialogGlodEgg=true:this.showDialogGlodEgg=false
                 }
+            },
+            // 关闭结果弹窗
+            changeResultRead(id){
+                let params = {id:id}
+                this.axios.post(this.GLOBAL.baseUrl +'/predict/update',JSON.stringify(params))
+                    .then((res)=>{
+                        let {state} = res.data;
+                        if(state == 'success'){
+                            this.showResultDialog=false
+                        }
+                    }).catch(err=>console.log(err))
             },
             // 关闭奖励弹窗
             changeAwardRead(id){
