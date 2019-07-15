@@ -11,7 +11,7 @@
             </p>
             <p class="active-rule-contet-item">
                 <span class="title">二、活动时间</span>
-                <span class="decs">00:30截至22:00</span>
+                <span class="decs">00:30截至22:30</span>
             </p>
             <p class="active-rule-contet-item">
                 <span class="title">三、活动规则</span>

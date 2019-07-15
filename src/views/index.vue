@@ -45,7 +45,7 @@
                                                                              width="47px" alt=""></button>
           <div class="operation-text" v-if="!status">
             <div>你还未预言哦</div>
-            <div>截止下一个交易日13:00</div>
+            <div>截止本交易日22:30</div>
           </div>
           <button @click="toRouter('price')" class="btn operation-btn"><img src="../assets/img/gift.png"
                                                                             width="47px"
