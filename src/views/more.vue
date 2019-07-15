@@ -16,7 +16,7 @@
                     <p class="desc">活跃度排行</p></div>
                 <div><p class="rank">{{userInfo.winRank}}</p>
                     <p class="desc">胜率排行</p></div>
-                <div><p class="rank">{{userInfo.winRatio*100}}%</p>
+                <div><p class="rank">{{(userInfo.winRatio*100).toFixed(2)}}%</p>
                     <p class="desc">胜率</p></div>
                 <div><p class="rank">{{userInfo.predictTimes}}</p>
                     <p class="desc">预言战绩</p></div>

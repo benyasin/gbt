@@ -43,7 +43,7 @@
                 <div class="operation-page">
                     <button @click="toRouter('dialog')" class="btn operation-btn"><img src="../assets/img/comment.png"
                                                                                        width="47px" alt=""></button>
-                    <div class="operation-text" v-show="!status">
+                    <div class="operation-text" v-if="!status">
                         <div>你还未预言哦</div>
                         <div>截止下一个交易日13:00</div>
                     </div>
