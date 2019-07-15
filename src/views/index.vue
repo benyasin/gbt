@@ -93,7 +93,7 @@
                         <p class="desc">活跃度排行</p></div>
                     <div><p class="rank">{{userInfo.winRank}}</p>
                         <p class="desc">胜率排行</p></div>
-                    <div><p class="rank">{{userInfo.winRatio*100}}%</p>
+                    <div><p class="rank">{{(userInfo.winRatio*100).toFixed(2)}}%</p>
                         <p class="desc">胜率</p></div>
                     <div><p class="rank">{{userInfo.predictTimes}}</p>
                         <p class="desc">预言战绩</p></div>
@@ -183,8 +183,8 @@
                     </div>
                     <div
                             style="width: 100%;height: 270px;position:absolute;top:50px;left:0;border-radius: 22px;background-color: #001436;padding:0 29px;">
-                        <p style="font-size: 18px;color: #FFD600;margin-top: 120px">获得{{userInfo.awardResult}}积分</p>
-                        <button @click="changeAwardRead(userInfo.awardId)"
+                        <p style="font-size: 18px;color: #FFD600;margin-top: 120px">获得{{awardInfo.awardResult}}积分</p>
+                        <button @click="changeAwardRead(awardInfo.awardId)"
                                 style="background: none;border:0;padding:0;margin-top:32px;"><img width="100%"
                                                                                                   src="../assets/img/sure.png"
                                                                                                   alt="">
@@ -260,6 +260,7 @@
             ...mapGetters([
                 'userInfo',
                 'chainInfo',
+                'awardInfo'
             ]),
             classOption: function () {
                 return {
@@ -333,8 +334,12 @@
                     symbol: config.symbol,
                     account: this.chainInfo.accountName,
                 })
-                this.poolCount = balance[0].split(' ')[0].toString().split('')
-                this.userBanlance = userbalance[0].split(' ')[0]
+                this.userBanlance = userbalance && userbalance[0].split(' ')[0]
+                this.poolCount = !balance.length?[0]:balance[0].split(' ')[0].toString().split('')
+                console.log('balance')
+                console.log(this.poolCount)
+                console.log('userbalance')
+                console.log(this.userBanlance)
             },
             getPersonUrl(url) {
                 const promise = new Promise((resolve, reject) => {
@@ -405,15 +410,14 @@
             // 获取奖励信息
             async getAward(){
                 let award = await this.getPersonUrl('/award/personalLatest')
-                if(award){
+                if(award.length){
                     let {date,_id,result,hasRead} = award[0]
                     let obj = {
                         awardDate:date,
                         awardId:_id,
                         awardResult:result
                     }
-                    console.log(obj)
-                    store.commit('SET_USERINFO', obj);
+                    store.commit('SET_AWARDINFO', obj);
                     hasRead===false?this.showDialogGlodEgg=true:this.showDialogGlodEgg=false
                 }
             },
@@ -528,19 +532,7 @@
                 accountName: this.$route.query.accountName,
             };
             store.commit('SET_CHAININFO', obj);
-            const u3 = createU3(config);
-            const balance = await u3.getCurrencyBalance({
-                code: config.pointAccount,
-                account: config.poolAccount,
-                symbol: config.symbol,
-            });
-            const userbalance = await u3.getCurrencyBalance({
-                code: config.pointAccount,
-                symbol: config.symbol,
-                account: this.chainInfo.accountName
-            })
-            this.poolCount = balance[0].split(' ')[0].toString().split('')
-            this.userBanlance = userbalance[0].split(' ')[0]
+            this.getBanlance()
         },
         mounted() {
             this.getChatList();

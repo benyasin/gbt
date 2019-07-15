@@ -17,6 +17,7 @@ const app = {
             phoneNum:'',
             accountName:''
         },
+        awardInfo:{},
     },
     mutations: {
         SET_DIRECTION: (state, direction) => {
@@ -27,6 +28,9 @@ const app = {
         },
         SET_CHAININFO:(state,obj)=>{
             state.chainInfo = obj
+        },
+        SET_AWARDINFO:(state,obj)=>{
+            state.awardInfo = obj
         }
     },
 }
