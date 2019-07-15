@@ -256,6 +256,9 @@
         userBanlance: 0,
       };
     },
+    created(){
+      document.body.removeChild(document.getElementById('animationPage'))
+    },
     computed: {
       ...mapGetters([
         'userInfo',

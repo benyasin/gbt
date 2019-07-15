@@ -8,7 +8,11 @@
   </head>
   <style>
     .spinner {
-      margin: 100px auto;
+      position: absolute;
+      top:50%;
+      left:50%;
+      margin-left: -25px;
+      margin-top:-30px;
       width: 50px;
       height: 60px;
       text-align: center;
@@ -61,14 +65,14 @@
     }
   </style>
   <body>
+    <div class="spinner" id="animationPage">
+      <div class="rect1"></div>
+      <div class="rect2"></div>
+      <div class="rect3"></div>
+      <div class="rect4"></div>
+      <div class="rect5"></div>
+    </div>
     <div id="app">
-      <div class="spinner">
-        <div class="rect1"></div>
-        <div class="rect2"></div>
-        <div class="rect3"></div>
-        <div class="rect4"></div>
-        <div class="rect5"></div>
-      </div>
     </div>
   </body>
 </html>
