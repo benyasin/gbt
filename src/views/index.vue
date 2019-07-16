@@ -321,7 +321,7 @@
           }).catch(err => console.log(err));
       },
       saveUserInfo() {
-        let params = { userId: this.userId, phoneNum: this.phoneNum, accountName: this.accountName };
+        let params = { userId: this.chainInfo.userId, phoneNum: this.chainInfo.phoneNum, accountName: this.chainInfo.accountName };
         this.axios.post(this.GLOBAL.baseUrl + '/user/add', JSON.stringify(params)).catch(err => console.log(err));
       },
       lookUpDown(val) {
