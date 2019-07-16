@@ -1,55 +1,16 @@
 <template>
   <div class="btc-index">
     <div class="bg">
-      <div class="header">
-        <img class="title" src="../assets/img/title.png" alt="">
-        <div class="decs">
-          <flexbox>
-            <flexbox-item>
-              <div class="wrap">
-                <span>抢活跃排位</span>
-                <span>再赢金蛋得积分</span>
-                <button class="btn" @click="toRouterActiveRule">活动规则 <img class="btn-img"
-                                                                          src="../assets/img/rightbtn.png"
-                                                                          alt="">
-                </button>
-              </div>
-            </flexbox-item>
-          </flexbox>
-        </div>
-        <div class="prize-pool">
-          <flexbox>
-            <flexbox-item>
-              <div class="wrap">
-                <span class="comment">当前奖池</span>
-                <span class="count" v-for="num in poolCount">
-                                   <span>{{num}}</span>
-                                </span>
-                <span class="comment">积分</span>
-              </div>
-            </flexbox-item>
-          </flexbox>
-        </div>
-      </div>
-      <vueSeamless class="dialogue" :data="dialogueList" :class-option="classOption">
-        <ul>
-          <li class="dialogue-wrap" v-for="(usr,index) in dialogueList">
-            <img class="img" :src="usr.avatar">
-            <span class="word">{{usr.content}}</span>
-          </li>
-        </ul>
-      </vueSeamless>
+      <indexHeader ref="indexHeader" @toRouterActiveRule="toRouterActiveRule" />
+      <indexChart ref="indexChart" />
       <div class="operation">
         <div class="operation-page">
-          <button @click="toRouter('dialog')" class="btn operation-btn"><img src="../assets/img/comment.png"
-                                                                             width="47px" alt=""></button>
+          <button @click="toRouter('dialog')" class="btn operation-btn"><img src="data:image/png;base64,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" width="47px" height="47px" alt=""></button>
           <div class="operation-text" v-if="!status">
             <div>你还未预言哦</div>
             <div>截止本交易日22:30</div>
           </div>
-          <button @click="toRouter('price')" class="btn operation-btn"><img src="../assets/img/gift.png"
-                                                                            width="47px"
-                                                                            alt=""></button>
+          <button @click="toRouter('price')" class="btn operation-btn"><img src="data:image/png;base64,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" width="47px" height="47px" alt=""></button>
         </div>
         <div class="user-operation">
           <div class="date">
@@ -65,16 +26,12 @@
             </div>
           </div>
           <div class="guess-btn" v-if="!status">
-            <button @click="lookUpDown('up')" class="btn guess-sub-btn"><img width="100%"
-                                                                             src="../assets/img/redbtn.png"
-                                                                             alt=""></button>
-            <button @click="lookUpDown('down')" class="btn"><img width="100%"
-                                                                 src="../assets/img/greenbtn.png" alt="">
+            <button @click="lookUpDown('up')" class="btn guess-sub-btn"><img width="100%" height="64px" src="../assets/img/redbtn.png" alt=""></button>
+            <button @click="lookUpDown('down')" class="btn"><img width="100%" height="64px" src="../assets/img/greenbtn.png" alt="">
             </button>
           </div>
           <div class="guessed-text" v-if="status">
-            <p>您已预言<span v-if="userInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else
-                                                                                             style="color:#36884A">跌</span>
+            <p>您已预言<span v-if="userInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else style="color:#36884A">跌</span>
             </p>
             <p class="p1">预计下一个交易日00:30结果揭晓</p>
           </div>
@@ -82,45 +39,7 @@
         <div>每个交易日涨跌仅可预言一次,每次可投20-500ultrain积分</div>
       </div>
     </div>
-    <div class="record">
-      <div class="record-info">
-        <div class="prophecy" @click="toRouter('prophecy')">
-          <span>预言记录</span>
-          <img src="../assets/img/arrowR.png" width="5px" height="10px" alt="">
-        </div>
-        <div class="info">
-          <div><p class="rank">{{userInfo.predictRank}}</p>
-            <p class="desc">活跃度排行</p></div>
-          <div><p class="rank">{{userInfo.winRank}}</p>
-            <p class="desc">胜率排行</p></div>
-          <div><p class="rank">{{(userInfo.winRatio*100).toFixed(2)}}%</p>
-            <p class="desc">胜率</p></div>
-          <div><p class="rank">{{userInfo.predictTimes}}</p>
-            <p class="desc">预言战绩</p></div>
-        </div>
-      </div>
-      <div class="record-tab">
-        <button-tab v-model="tabIndex">
-          <button-tab-item>活跃度排行</button-tab-item>
-          <button-tab-item>胜率排行</button-tab-item>
-        </button-tab>
-        <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span
-          v-else>太棒了！继续加油哦</span></div>
-        <swiper v-model="tabIndex" height="390px" :show-dots="false">
-          <swiper-item v-for="(item, index) in tablist" :key="index">
-            <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
-              <span class="sp1">{{index+1}}</span>
-              <img width="32px" height="32px" style="border-radius: 32px" :src="itm.avatar" alt="">
-              <span class="sp2">{{itm.username}}</span>
-              <span class="sp3"><span v-if="tabIndex==0">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span
-                class="sp4" v-if="tabIndex==0">活跃度</span></span>
-            </div>
-          </swiper-item>
-        </swiper>
-        <button v-if="tableData[tablist[tabIndex]]&&tableData[tablist[tabIndex]].length>=6"
-                class="btn list-block list-block-btn" @click="handleToMore(tabIndex)"><span>查看更多</span></button>
-      </div>
-    </div>
+    <indexTab @toRouter="toRouter" @handleToMore="handleToMore" />
     <div v-transfer-dom>
       <x-dialog v-model="showDialog" hide-on-blur
                 :dialog-style="{'max-width': '100%',width:'289px', height: '282px', 'background-color': '#001436','border-radius':'22px'}">
@@ -177,17 +96,13 @@
         <div style="width:100%;height:100%;">
           <div style="width:100%;height159px;position: absolute;top:0;left:0;z-index: 1">
             <img src="../assets/img/eggBg.png" width="100%" alt="">
-            <img style="position: absolute;top:127px;left:42px;" src="../assets/img/eggText.png"
-                 width="205px"
-                 height="24px" alt="">
+            <img style="position: absolute;top:127px;left:42px;" src="../assets/img/eggText.png" width="205px" height="24px" alt="">
           </div>
           <div
             style="width: 100%;height: 270px;position:absolute;top:50px;left:0;border-radius: 22px;background-color: #001436;padding:0 29px;">
             <p style="font-size: 18px;color: #FFD600;margin-top: 120px">获得{{awardInfo.awardResult}}积分</p>
             <button @click="changeAwardRead(awardInfo.awardId)"
-                    style="background: none;border:0;padding:0;margin-top:32px;"><img width="100%"
-                                                                                      src="../assets/img/sure.png"
-                                                                                      alt="">
+                    style="background: none;border:0;padding:0;margin-top:32px;"><img width="100%" height="60px" src="../assets/img/sure.png" alt="">
             </button>
           </div>
         </div>
@@ -198,19 +113,13 @@
 </template>
 
 <script>
-  import vueSeamless from 'vue-seamless-scroll';
+  import indexChart from './indexChart'
+  import indexHeader from './indexHeader'
+  import indexTab from './indexTab'
   import { createU3 } from 'u3.js';
   import store from '../store';
   import config from '../../config/ultrain';
   import {
-    Flexbox,
-    FlexboxItem,
-    Group,
-    Cell,
-    ButtonTab,
-    ButtonTabItem,
-    Swiper,
-    SwiperItem,
     XDialog,
     TransferDomDirective as TransferDom,
     Toast,
@@ -224,13 +133,7 @@
       TransferDom,
     },
     components: {
-      Flexbox,
-      FlexboxItem,
-      Group,
-      Cell,
-      ButtonTab, ButtonTabItem,
-      Swiper, SwiperItem,
-      XDialog, Toast, Loading, vueSeamless,
+      XDialog, Toast, Loading,indexChart,indexHeader,indexTab
     },
     data() {
       return {
@@ -240,9 +143,6 @@
         showResultDialog: false,
         showDialogGlodEgg: false,
         intervalId: null,
-        tabIndex: 0,
-        tablist: ['活跃度排行', '胜率排行'],
-        tableData: {},
         poolCount: [],
         countlist: [20, 100, 200, 500],
         dialogueList: [],
@@ -255,9 +155,6 @@
         },
         userBanlance: 0,
       };
-    },
-    created(){
-      document.body.removeChild(document.getElementById('animationPage'))
     },
     computed: {
       ...mapGetters([
@@ -339,10 +236,6 @@
         });
         this.userBanlance = userbalance.length ? userbalance[0].split(' ')[0] : 0;
         this.poolCount = balance.length ? balance[0].split(' ')[0].split('') : 0;
-        console.log('balance');
-        console.log(this.poolCount);
-        console.log('userbalance');
-        console.log(this.userBanlance);
       },
       getPersonUrl(url) {
         const promise = new Promise((resolve, reject) => {
@@ -356,42 +249,7 @@
         });
         return promise;
       },
-      // 活跃度 胜率
-      async getTableData() {
-        let map = new Map();
-        let obj = {};
-        let activelist = await this.getDataUrl('/rank/activeList');
-        let winlist = await this.getDataUrl('/rank/winList');
-        map.set('活跃度排行', activelist);
-        map.set('胜率排行', winlist);
-        for (let [key, value] of map) {
-          obj[key] = value;
-        }
-        this.tableData = obj;
-      },
-      getDataUrl(url) {
-        const promise = new Promise((resolve, reject) => {
-          this.axios.get(this.GLOBAL.baseUrl + url + '?currentPage=1&pageSize=6')
-            .then((res) => {
-              let { state, data } = res.data;
-              state == 'success' ? resolve(data) : resolve([]);
-            }).catch((err) => {
-            reject(err);
-          });
-        });
-        return promise;
-      },
-      // 聊天
-      getChatList() {
-        this.axios.get(this.GLOBAL.baseUrl + '/chat/list')
-          .then((res) => {
-            let { state, message, data } = res.data;
-            if (state == 'success') {
-              this.dialogueList = data;
-            }
-          })
-          .catch((err) => console.log(err));
-      },
+
       // 最新预测信息
       getLatestIndex() {
         this.axios.get(this.GLOBAL.baseUrl + '/predict/latestIndex')
@@ -549,18 +407,15 @@
       this.getBanlance();
     },
     mounted() {
-      this.getChatList();
       this.getLatestIndex();
-      this.getTableData();
       this.getPersonInfo();
       this.getAward();
       this.$on('listenChatList', function() {
-        this.getChatList();
+        this.$refs.indexChart.getChatList();
       });
       this.intervalId = setInterval(() => {
-        this.getChatList();
+        this.$refs.indexChart.getChatList();
       }, 10000);
-
       document.addEventListener('message', (e) => {
         let result = e.data;
         let { success, msg } = JSON.parse(result);

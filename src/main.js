@@ -3,7 +3,6 @@ import App from './App'
 import axios from '@/utils/axios.js';
 import router from './router'
 import store from './store'
-import '@/filters'
 import "babel-polyfill"
 import 'lib-flexible/flexible'
 import '@/assets/scss/index.scss'
