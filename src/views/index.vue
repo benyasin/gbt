@@ -41,12 +41,12 @@
     </div>
     <indexTab @toRouter="toRouter" @handleToMore="handleToMore" />
     <div v-transfer-dom>
-      <x-dialog v-model="showDialog" hide-on-blur
+      <x-dialog @on-hide="closeShowDialog" v-model="showDialog" hide-on-blur
                 :dialog-style="{'max-width': '100%',width:'289px', height: '282px', 'background-color': '#001436','border-radius':'22px'}">
         <div class="dialog-wrap"
              style="width: 100%;height: 100%;padding:15px 19px 0 19px;text-align: center;font-size: 12px;">
           <div style="text-align: right;margin-right: -4px">
-            <x-icon @click="showDialog = false" type="ios-close-empty" size="24"
+            <x-icon @click="closeShowDialog" type="ios-close-empty" size="24"
                     style="fill:#7A8496;"></x-icon>
           </div>
           <p style="font-size: 18px;font-weight: 700;color:#FFD600;">预言{{nextDate}}大盘指数涨跌</p>
@@ -61,10 +61,10 @@
               v-for="item in countlist">{{item}}
             </button>
           </div>
-          <button @click="sureGuess" v-if="statusUpDown=='up'"
+          <button @click.once="sureGuess" v-if="statusUpDown=='up'"
                   style="margin-top: 33px;padding:0;width: 100%;height: 65px;border:0;background:none"><img
             width="100%" height="65px" src="../assets/img/sureRedbtn.png" alt=""></button>
-          <button @click="sureGuess" v-if="statusUpDown!=='up'"
+          <button @click.once="sureGuess" v-if="statusUpDown!=='up'"
                   style="margin-top: 33px;padding:0;width: 100%;height: 65px;background: none;border:0;"><img
             width="100%" height="65px" src="../assets/img/sureGreenbtn.png" alt=""></button>
         </div>
@@ -139,7 +139,7 @@
       return {
         status: false,
         statusUpDown: 'up',
-        showDialog: false,
+        showDialog: true,
         showResultDialog: false,
         showDialogGlodEgg: false,
         intervalId: null,
@@ -283,6 +283,10 @@
           hasRead === false ? this.showDialogGlodEgg = true : this.showDialogGlodEgg = false;
         }
       },
+      // 关闭猜涨跌
+      closeShowDialog(){
+          this.showDialog = false
+      },
       // 关闭结果弹窗
       changeResultRead(id) {
         let params = { id: id };
@@ -397,20 +401,22 @@
         }
       },
     },
-    async created() {
-      let obj = {
-        chainId: this.$route.query.chainId,
-        userId: this.$route.query.userId,
-        phoneNum: this.$route.query.phoneNum,
-        accountName: this.$route.query.accountName,
-      };
-      store.commit('SET_CHAININFO', obj);
-      this.getBanlance();
+    created(){
+        this.getLatestIndex();
+        this.getPersonInfo();
+        this.getAward();
+        this.getBanlance();
+    },
+    beforeCreate(){
+        let obj = {
+            chainId: this.$route.query.chainId,
+            userId: this.$route.query.userId,
+            phoneNum: this.$route.query.phoneNum,
+            accountName: this.$route.query.accountName,
+        };
+        store.commit('SET_CHAININFO', obj);
     },
     mounted() {
-      this.getLatestIndex();
-      this.getPersonInfo();
-      this.getAward();
       this.$on('listenChatList', function() {
         this.$refs.indexChart.getChatList();
       });
