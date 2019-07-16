@@ -3,7 +3,7 @@
         <div class="gbt-dialog-header">
             <button @click="goback" class="btn" style="color:#000;">返回上一层</button>
             <span class="title">发弹幕</span>
-            <button @click="send" class="btn send-btn">发送</button>
+            <button @click.once="send" class="btn send-btn">发送</button>
         </div>
         <x-textarea v-model="usrMessage" :max="30" placeholder="写下你的想法" @on-focus="onEvent('focus')"
                     @on-blur="onEvent('blur')"></x-textarea>
