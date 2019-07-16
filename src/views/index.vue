@@ -207,6 +207,7 @@
             winRank: rankInfo.winRank,
             winRatio: rankInfo.winRatio,
             winTimes: rankInfo.winTimes,
+            awardTimes: rankInfo.awardTimes,
             date: perdictInfo[0].date,
             isFinished: perdictInfo[0].isFinished,
             predictResult: perdictInfo[0].predictResult,
