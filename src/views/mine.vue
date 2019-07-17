@@ -97,7 +97,7 @@
         methods: {
             async getTableData() {
                 let map = new Map()
-                let predictlist = await this.getList('/predict/personal?userId=${this.chainInfo.userId}`)
+                let predictlist = await this.getList(`/predict/personal?userId=${this.chainInfo.userId}`)
                 let pricelist = await this.getList(`/award/personal?userId=${this.chainInfo.userId}`)
                 map.set('我的预言', predictlist)
                 map.set('我的奖励', pricelist)
