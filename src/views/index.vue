@@ -150,7 +150,7 @@
       return {
         status: false,
         statusUpDown: 'up',
-        showDialog: true,
+        showDialog: false,
         showResultDialog: false,
         showDialogGlodEgg: false,
         intervalId: null,
