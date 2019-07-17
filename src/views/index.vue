@@ -38,8 +38,8 @@
             </button>
           </div>
           <div class="guessed-text" v-if="status">
-            <p>您已预言<span v-if="userInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else
-                                                                                             style="color:#36884A">跌</span>
+            <p>您已预言<span v-if="predictInfo.predictResult>0" style="color:#C34E4C">涨</span><span v-else
+                                                                                                style="color:#36884A">跌</span>
             </p>
             <p class="p1">预计下一个交易日00:30结果揭晓</p>
           </div>
@@ -80,20 +80,20 @@
       <toast v-model="showToast" type="text">{{errorMsg}}</toast>
     </div>
     <div v-transfer-dom>
-      <x-dialog @on-hide="changeResultRead(userInfo._id)" v-model="showResultDialog" hide-on-blur
+      <x-dialog @on-hide="changeResultRead(predictInfo._id)" v-model="showResultDialog" hide-on-blur
                 :dialog-style="{'max-width': '100%',width:'289px', height: '282px', 'background-color': '#001436','border-radius':'22px'}">
         <div class="dialog-wrap"
              style="width: 100%;height: 100%;padding:15px 19px 0 19px;text-align: center;font-size: 12px;">
           <div style="text-align: right;margin-right: -4px">
-            <x-icon @click="changeResultRead(userInfo._id)" type="ios-close-empty" size="24"
+            <x-icon @click="changeResultRead(predictInfo._id)" type="ios-close-empty" size="24"
                     style="fill:#7A8496;"></x-icon>
           </div>
           <p style="font-size: 18px;font-weight: 700;color:#FFD600;display: flex"><span
-            style="flex:1;text-align: left">{{userInfo.date}}大盘指数</span><span
-            style="width: 20px;color:#fff;">{{userInfo.actualResult>0?'涨':'跌'}}</span></p>
+            style="flex:1;text-align: left">{{predictInfo.date}}大盘指数</span><span
+            style="width: 20px;color:#fff;">{{predictInfo.actualResult>0?'涨':'跌'}}</span></p>
           <p style="height: 150px;line-height: 150px;font-size:26px;color: #fff;">
-            {{userInfo.isWin?'预言成功':'预言失败'}}</p>
-          <p style="color: #fff;font-size: 16px;">收获 {{userInfo.actualValue}} Tokens</p>
+            {{predictInfo.isWin?'预言成功':'预言失败'}}</p>
+          <p style="color: #fff;font-size: 16px;">收获 {{predictInfo.actualValue}} Tokens</p>
         </div>
       </x-dialog>
       <toast v-model="showToast" type="text">{{errorMsg}}</toast>
@@ -170,6 +170,7 @@
     computed: {
       ...mapGetters([
         'userInfo',
+        'predictInfo',
         'chainInfo',
         'awardInfo',
       ]),
@@ -200,37 +201,41 @@
     methods: {
       // 获取userinfo
       async getPersonInfo() {
-        let perdictInfo = await this.getPersonUrl('/predict/personalLatest');
         let rankInfo = await this.getPersonUrl('/rank/personal');
-        if (perdictInfo == null) {
-          this.status = false;
-        } else {
-          if (perdictInfo && !perdictInfo[0].hasRead) {
-            this.status = false;
-            this.showResultDialog = true;
-          } else {
-            this.status = true;
-          }
+        if (rankInfo) {
           let obj = {
-            avatar: rankInfo.avatar,
             predictRank: rankInfo.predictRank,
             predictTimes: rankInfo.predictTimes,
             winRank: rankInfo.winRank,
             winRatio: rankInfo.winRatio,
             winTimes: rankInfo.winTimes,
             awardTimes: rankInfo.awardTimes,
-            date: perdictInfo[0].date,
-            isFinished: perdictInfo[0].isFinished,
-            predictResult: perdictInfo[0].predictResult,
-            predictValue: perdictInfo[0].predictValue,
-            actualResult: perdictInfo[0].actualResult,
-            actualValue: perdictInfo[0].actualValue,
-            isWin: perdictInfo[0].isWin,
-            userId: perdictInfo[0].userId,
-            username: perdictInfo[0].username,
-            _id: perdictInfo[0]._id,
           };
-          store.commit('SET_USERINFO', obj);
+          store.commit('SET_RANKINFO', obj);
+        }
+
+
+        let predictInfo = await this.getPersonUrl('/predict/personalLatest');
+        if (predictInfo == null) {
+          this.status = false;
+        } else {
+          if (predictInfo.isFinished && !predictInfo.hasRead) {
+            this.status = false;
+            this.showResultDialog = true;
+          } else {
+            this.status = true;
+          }
+          let obj = {
+            date: predictInfo.date,
+            isFinished: predictInfo.isFinished,
+            predictResult: predictInfo.predictResult,
+            predictValue: predictInfo.predictValue,
+            actualResult: predictInfo.actualResult,
+            actualValue: predictInfo.actualValue,
+            isWin: predictInfo.isWin,
+            _id: predictInfo._id,
+          };
+          store.commit('SET_PREDICTINFO', obj);
         }
       },
       // 获取balance
@@ -283,8 +288,8 @@
       // 获取奖励信息
       async getAward() {
         let award = await this.getPersonUrl('/award/personalLatest');
-        if (award.length) {
-          let { date, _id, result, hasRead } = award[0];
+        if (award) {
+          let { date, _id, result, hasRead } = award;
           let obj = {
             awardDate: date,
             awardId: _id,
@@ -309,6 +314,7 @@
             }
           }).catch(err => console.log(err));
       },
+
       // 关闭奖励弹窗
       changeAwardRead(id) {
         let params = { id: id };
@@ -320,9 +326,19 @@
             }
           }).catch(err => console.log(err));
       },
+
+      //保存用户信息
       saveUserInfo() {
-        let params = { userId: this.chainInfo.userId, phoneNum: this.chainInfo.phoneNum, accountName: this.chainInfo.accountName };
-        this.axios.post(this.GLOBAL.baseUrl + '/user/add', JSON.stringify(params)).catch(err => console.log(err));
+        let params = {
+          userId: this.chainInfo.userId,
+          phoneNum: this.chainInfo.phoneNum,
+          accountName: this.chainInfo.accountName,
+        };
+        this.axios.post(this.GLOBAL.baseUrl + '/user/add', JSON.stringify(params)).then(d => {
+          if (d.data.state === 'success') {
+            store.commit('SET_USERINFO', d.data.data);
+          }
+        }).catch(err => console.log(err));
       },
       lookUpDown(val) {
         let now = new Date();
@@ -453,7 +469,7 @@
               let { state, message } = res.data;
               if (state == 'success') {
                 this.showDialog = false;
-                this.getPersonInfo();
+                this.status = true;
                 this.getBanlance();
               } else {
                 this.errorMsg = message;

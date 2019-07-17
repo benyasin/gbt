@@ -6,14 +6,14 @@
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAgCAMAAAAlvKiEAAAASFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACrhKybAAAAGHRSTlMAbAVoZFhOLicIYV0WMyIdEEg6GhQNU0GSAe2jAAAAoElEQVQoz23SQRKAIAwDQItVBFFBAf//U4s3UjjuBGZSOk0mmEkdy6mgBSZaUc09izpQ17RmzFrR5cF3N9E9qiyL6qwXPVEfUa/03In4xHLXQjRb1CjKVjWuo2xeiehWlZNkX8iaAcZ2/XXqyfnoc2VpBkV/M6oQb70F3wzGIebB/iFfMOJmua+xtY/rc+4Qq2GwDGWwNup7D05iqJdD+gBcpAWVGGA0BwAAAABJRU5ErkJggg==" width="5px" height="10px" alt="">
             </div>
             <div class="info">
-                <div><p class="rank">{{userInfo.predictRank}}</p>
+                <div><p class="rank">{{rankInfo.predictRank}}</p>
                     <p class="desc">活跃度排行</p></div>
-                <div><p class="rank">{{userInfo.winRank}}</p>
+                <div><p class="rank">{{rankInfo.winRank}}</p>
                     <p class="desc">胜率排行</p></div>
-                <div><p class="rank">{{(userInfo.winRatio*100).toFixed(2)}}%</p>
+                <div><p class="rank">{{(rankInfo.winRatio*100).toFixed(2)}}%</p>
                     <p class="desc">胜率</p></div>
-                <div><p class="rank">{{userInfo.predictTimes}}</p>
-                    <p class="desc">预言战绩</p></div>
+                <div><p class="rank">{{rankInfo.predictTimes}}</p>
+                    <p class="desc">预言次数</p></div>
             </div>
         </div>
         <div class="record-tab">
@@ -23,12 +23,13 @@
             </button-tab>
             <div class="record-desc"><span v-if="tabIndex==0">活跃度排名靠前的人，更有机会瓜分金蛋积分</span><span
                     v-else>太棒了！继续加油哦</span></div>
+
             <swiper v-model="tabIndex" height="390px" :show-dots="false">
                 <swiper-item v-for="(item, index) in tablist" :key="index">
                     <div class="list-block" v-for="(itm,index) in tableData[item]" :key="index">
                         <span class="sp1">{{index+1}}</span>
-                        <img width="32px" height="32px" style="border-radius: 32px" :src="itm.avatar" alt="">
-                        <span class="sp2">{{itm.username}}</span>
+                        <img width="32px" height="32px" style="border-radius: 32px" :src="itm.user.avatar" alt="">
+                        <span class="sp2">{{itm.user.username}}</span>
                         <span class="sp3"><span v-if="tabIndex==0">{{itm.predictTimes}}</span><span v-else>{{(itm.winRatio*100).toFixed(2)}}%</span><span
                                 class="sp4" v-if="tabIndex==0">活跃度</span></span>
                     </div>
@@ -61,8 +62,8 @@
                 tableData:[],
             }
         },
-        created(){
-            this.getTableData()
+        async mounted(){
+            await this.getTableData()
         },
         methods:{
             toRouter(val){
@@ -100,7 +101,7 @@
         },
         computed: {
             ...mapGetters([
-                'userInfo',
+                'rankInfo',
             ]),
         }
     }

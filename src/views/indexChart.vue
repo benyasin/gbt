@@ -3,7 +3,7 @@
         <vueSeamless class="dialogue" :data="dialogueList" :class-option="classOption">
             <ul>
                 <li class="dialogue-wrap" v-for="(usr,index) in dialogueList">
-                    <img class="img" :src="usr.avatar">
+                    <img class="img" :src="usr.user.avatar">
                     <span class="word">{{usr.content}}</span>
                 </li>
             </ul>
