@@ -330,9 +330,9 @@
       //保存用户信息
       saveUserInfo() {
         let params = {
-          userId: this.chainInfo.userId,
-          phoneNum: this.chainInfo.phoneNum,
-          accountName: this.chainInfo.accountName,
+          userId: this.$route.query.userId,
+          phoneNum: this.$route.query.phoneNum,
+          accountName: this.$route.query.accountName,
         };
         this.axios.post(this.GLOBAL.baseUrl + '/user/add', JSON.stringify(params)).then(d => {
           if (d.data.state === 'success') {
@@ -460,7 +460,7 @@
         let { success, msg } = JSON.parse(result);
         if (success) {
           let params = {
-            phoneNum: this.chainInfo.phoneNum,
+            userId: this.$route.query.userId,
             predictValue: this.selectCount[0],
             predictResult: this.statusUpDown == 'up' ? 1 : -1,
           };
