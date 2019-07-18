@@ -69,10 +69,10 @@
               v-for="item in countlist">{{item}}
             </button>
           </div>
-          <button @click.once="sureGuess" v-if="statusUpDown=='up'"
+          <button @click="sureGuess" v-if="statusUpDown=='up'"
                   style="margin-top: 33px;padding:0;width: 100%;height: 65px;border:0;background:none"><img
             width="100%" height="65px" src="../assets/img/sureRedbtn.png" alt=""></button>
-          <button @click.once="sureGuess" v-if="statusUpDown!=='up'"
+          <button @click="sureGuess" v-if="statusUpDown!=='up'"
                   style="margin-top: 33px;padding:0;width: 100%;height: 65px;background: none;border:0;"><img
             width="100%" height="65px" src="../assets/img/sureGreenbtn.png" alt=""></button>
         </div>
@@ -348,10 +348,20 @@
       },
       lookUpDown(val) {
         let now = new Date();
-        let h = now.getHours();
-        let m = now.getMinutes();
-        if ((h >= 22) || (h == 0 && m < 30)) {
-          this.errorMsg = '预言时间来哦!';
+        let year = now.getFullYear();
+        let month = now.getMonth();
+        let day = now.getDate();
+
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+
+        let start = Date.UTC(year, month, day, 0, 30);
+        let end = Date.UTC(year, month, day, 23, 30);
+
+        if (now.getTime() > start && now.getTime() < end) {
+          console.log('当前时间可以预言')
+        }else{
+          this.errorMsg = '00:30 ~ 22:30 可以预言';
           this.showToast = true;
           return;
         }
