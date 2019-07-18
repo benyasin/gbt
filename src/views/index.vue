@@ -218,25 +218,30 @@
         let predictInfo = await this.getPersonUrl('/predict/personalLatest');
         if (predictInfo == null) {
           this.status = false;
-        } else {
-          if (predictInfo.isFinished && !predictInfo.hasRead) {
-            this.status = false;
-            this.showResultDialog = true;
-          } else {
-            this.status = true;
-          }
-          let obj = {
-            date: predictInfo.date,
-            isFinished: predictInfo.isFinished,
-            predictResult: predictInfo.predictResult,
-            predictValue: predictInfo.predictValue,
-            actualResult: predictInfo.actualResult,
-            actualValue: predictInfo.actualValue,
-            isWin: predictInfo.isWin,
-            _id: predictInfo._id,
-          };
-          store.commit('SET_PREDICTINFO', obj);
+          return;
         }
+
+        let obj = {
+          date: predictInfo.date,
+          isFinished: predictInfo.isFinished,
+          predictResult: predictInfo.predictResult,
+          predictValue: predictInfo.predictValue,
+          actualResult: predictInfo.actualResult,
+          actualValue: predictInfo.actualValue,
+          isWin: predictInfo.isWin,
+          _id: predictInfo._id,
+        };
+        store.commit('SET_PREDICTINFO', obj);
+
+        if (predictInfo.isFinished) {
+          if (!predictInfo.hasRead) {
+            this.showResultDialog = true;
+          }
+          this.status = false;
+          return;
+        }
+
+        this.status = true;
       },
       // 获取balance
       async getBanlance() {
@@ -254,6 +259,7 @@
         this.userBanlance = userbalance.length ? userbalance[0].split(' ')[0] : 0;
         this.poolCount = balance.length ? balance[0].split(' ')[0].split('') : 0;
       },
+
       getPersonUrl(url) {
         const promise = new Promise((resolve, reject) => {
           this.axios.get(this.GLOBAL.baseUrl + url + `?userId=${this.chainInfo.userId}`)
