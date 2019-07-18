@@ -356,7 +356,7 @@
         let minute = now.getMinutes();
 
         let start = Date.UTC(year, month, day, 0, 30);
-        let end = Date.UTC(year, month, day, 23, 30);
+        let end = Date.UTC(year, month, day, 22, 30);
 
         if (now.getTime() > start && now.getTime() < end) {
           console.log('当前时间可以预言')
