@@ -475,6 +475,9 @@
         let result = e.data;
         let { success, msg } = JSON.parse(result);
         if (success) {
+          this.showDialog = false;
+          this.status = true;
+          this.getBanlance();
           let params = {
             userId: this.$route.query.userId,
             predictValue: this.selectCount[0],
@@ -483,11 +486,7 @@
           this.axios.post(this.GLOBAL.baseUrl + '/predict/add', params)
             .then((res) => {
               let { state, message } = res.data;
-              if (state == 'success') {
-                this.showDialog = false;
-                this.status = true;
-                this.getBanlance();
-              } else {
+              if (state !== 'success') {
                 this.errorMsg = message;
                 this.showToast = true;
               }
