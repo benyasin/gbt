@@ -210,8 +210,8 @@
                         let latestPredict = {}
                         let rank = {}
                         if (state == 'success') {
-                            latestPredict = data['latestPredict'] || {}
-                            rank =  data['rank'] || {}
+                            latestPredict = data['latestPredict']
+                            rank =  data['rank']
                             if (rank) {
                                 let {predictRank,predictTimes,winRank,winRatio,winTimes,awardTimes} = rank
                                 let rankobj = {
